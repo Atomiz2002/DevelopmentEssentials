@@ -1,5 +1,5 @@
 {
-  "name": "me.atomiz.developmentessentials",
+  "name": "com.github.atomiz.developmentessentials",
   "displayName": "Development Essentials",
   "version": "0.0.1",
   "description": "Quite literally the name",
@@ -9,6 +9,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com:Atomiz2002/me.atomiz.developmentessentialsTODO.git"
+    "url": "https://github.com/Atomiz2002/DevelopmentEssentials.git"
   }
 }
