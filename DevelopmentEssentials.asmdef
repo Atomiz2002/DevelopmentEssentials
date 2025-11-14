@@ -1,5 +1,5 @@
 ﻿{
-    "name": "Development Essentials",
+    "name": "DevelopmentEssentials",
     "allowUnsafeCode": false,
     "autoReferenced": true,
     "noEngineReferences": false,
@@ -17,16 +17,5 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES"
-        },
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR"
-        }
-    ]
+    "versionDefines": []
 }
