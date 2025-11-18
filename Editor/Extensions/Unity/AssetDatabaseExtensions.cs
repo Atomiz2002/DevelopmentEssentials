@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace DevelopmentEssentials.Extensions.Unity {
+namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
     public static class AssetDatabaseExtensions {
 

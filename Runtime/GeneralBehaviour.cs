@@ -1,12 +1,17 @@
 ﻿using System.Diagnostics;
 using DevelopmentEssentials.Extensions.Unity;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
+#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
+using Sirenix.OdinInspector;
+#endif
+
 namespace DevelopmentEssentials {
 
+#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
     [HideMonoScript]
+#endif
     public abstract class GeneralBehaviour : MonoBehaviour {
 
         #region Constant Names
@@ -24,7 +29,9 @@ namespace DevelopmentEssentials {
         [Conditional("UNITY_EDITOR")]
         protected virtual void Reference() {}
 
+#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
         [OnInspectorInit]
+#endif
         protected virtual void OnValidate() {
             Reference();
         }

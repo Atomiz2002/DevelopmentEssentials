@@ -10,12 +10,23 @@
         "ComponentNames.Editor"
     ],
     "precompiledReferences": [
-        "Sirenix.Serialization.dll",
         "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Serialization.dll",
         "Sirenix.Utilities.Editor.dll"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "",
+            "define": "DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES"
+        },
+        {
+            "name": "Unity",
+            "expression": "",
+            "define": "DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR"
+        }
+    ]
 }

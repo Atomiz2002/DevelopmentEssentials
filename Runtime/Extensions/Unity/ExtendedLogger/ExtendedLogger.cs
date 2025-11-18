@@ -27,6 +27,15 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
 
         private static readonly Dictionary<string, List<object>> logQueue = new();
 
+// TODO STACKABLE CONDITIONAL LOGS, USE .LogLater(index, ...) AND .LogNow(index) INDEPENDENT OF LINE NUMBER
+// TODO MAYBE USE DATETIME.NOW.MILLISECONDS TO DISTINGUISH METHOD CALLS, OTHERWISE CLEAR LogQueue CALL IS REQUIRED
+// TODO EXAMPLE:
+// TODO EXAMPLE: var a = field.Method().Method2(x => x.Method3().LogLater(0)); // stack logs
+// TODO EXAMPLE:
+// TODO EXAMPLE: if (a.Method4())
+// TODO EXAMPLE:     throw new("NotFound".LogNow(0)); // log them if necessary
+// TODO EXAMPLE:
+
         /// Print instantly and return the value for further use.
         /// <param name="formattable">Used as a prefix unless "{0}" is present in which case <paramref name="t"/> is formatted into it.</param>
 #if EXTENDED_LOGGER_REQUIRES_ATTRIBUTE

@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using DevelopmentEssentials.Extensions.CS;
 using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
@@ -173,7 +174,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             string spritePath = $"{Path.Combine("Assets", Path.Combine(scriptPath))}{assetType}{extension}";
 
-            spritePath.LoadAsset(out T asset);
+            T asset = AssetDatabase.LoadAssetAtPath<T>(spritePath);
 
             if (!asset)
                 throw new("Required asset not located at the appropriate path");

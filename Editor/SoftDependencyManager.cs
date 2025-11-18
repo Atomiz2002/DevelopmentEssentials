@@ -10,8 +10,8 @@ namespace DevelopmentEssentials.Editor {
 
     public class SoftDependencyManager : AssetPostprocessor {
 
-        private const string packageAsmdef = "Development Essentials.asmdef";
-        private const string definesPrefix = "DEVELOPMENT_ESSENTIALS";
+        private const string packageAsmdef = "DevelopmentEssentials.asmdef";
+        private const string definesPrefix = "DEVELOPMENT_ESSENTIALS_"; // PREFIXES THE SOFT DEPENDENCY DEFINE
 
         private static readonly List<SoftDependency> softAsmdefDependencies = new() {
             new("COMPONENT_NAMES", "ComponentNames", "ComponentNames.Editor"),
@@ -27,7 +27,7 @@ namespace DevelopmentEssentials.Editor {
                 .FirstOrDefault(p => Path.GetFileName(p) == packageAsmdef); // kind of an unnecessary check?
 
             if (string.IsNullOrEmpty(packageAsmdefPath))
-                throw new("Failed to find package asmdef");
+                throw new($"Failed to find package asmdef: {packageAsmdef}");
 
             AsmdefData asmdefData = JsonUtility.FromJson<AsmdefData>(File.ReadAllText(packageAsmdefPath, Encoding.UTF8));
             bool       modified   = false;
@@ -133,7 +133,7 @@ namespace DevelopmentEssentials.Editor {
             public readonly Dictionary<string, bool> dependencies;
 
             public SoftDependency(string define, params string[] dependencies) {
-                this.define = $"{definesPrefix}_{define}";
+                this.define = definesPrefix + define;
 
                 // TODO nonexistent still get "located"
                 this.dependencies = dependencies.Select(dependency =>
