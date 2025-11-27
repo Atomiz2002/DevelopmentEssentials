@@ -17,10 +17,10 @@ using UnityEngine;
 using Color = System.Drawing.Color;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
+#endif
 
 namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
 
-#endif
     public static class ExtendedLogger {
 
 #if UNITY_EDITOR && !SIMULATE_BUILD || ENABLE_LOGS

@@ -1,5 +1,7 @@
 ﻿using System;
+#if ENABLE_LOGS
 using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
+#endif
 
 namespace DevelopmentEssentials.Extensions.CS {
 
@@ -10,7 +12,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke();
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -19,7 +23,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -28,7 +34,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -37,7 +45,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -46,7 +56,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -55,7 +67,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -64,7 +78,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5, arg6);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -73,7 +89,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -82,7 +100,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -91,7 +111,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -100,7 +122,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 action?.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 

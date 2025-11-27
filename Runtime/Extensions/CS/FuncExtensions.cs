@@ -1,6 +1,8 @@
 ﻿using System;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEngine;
+#if ENABLE_LOGS
+using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
+#endif
 
 // TODO: Build a window to track all invokes
 namespace DevelopmentEssentials.Extensions.CS {
@@ -13,7 +15,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke();
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -25,7 +29,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -37,7 +43,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -49,7 +57,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -61,7 +71,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -73,7 +85,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4, arg5);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -85,7 +99,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4, arg5, arg6);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -97,7 +113,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -109,7 +127,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;
@@ -121,7 +141,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return func.Invoke(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
 
             return default;

@@ -1,6 +1,8 @@
 ﻿using System;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEngine.Events;
+#if ENABLE_LOGS
+using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
+#endif
 
 namespace DevelopmentEssentials.Extensions.Unity {
 
@@ -11,7 +13,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 action?.Invoke();
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -20,7 +24,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 action?.Invoke(arg);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -29,7 +35,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 action?.Invoke(arg1, arg2);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -38,7 +46,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 action?.Invoke(arg1, arg2, arg3);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
@@ -47,7 +57,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 action?.Invoke(arg1, arg2, arg3, arg4);
             }
             catch (Exception e) {
+#if ENABLE_LOGS
                 e.LogEx();
+#endif
             }
         }
 
