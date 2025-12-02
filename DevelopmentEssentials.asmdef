@@ -6,24 +6,9 @@
     "overrideReferences": true,
     "rootNamespace": "DevelopmentEssentials",
     "references": [],
-    "precompiledReferences": [
-        "Sirenix.OdinInspector.Attributes.dll",
-        "Sirenix.Serialization.dll",
-        "Sirenix.Utilities.Editor.dll"
-    ],
+    "precompiledReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "Unity",
-            "expression": "Missing ComponentNames.Editor",
-            "define": "DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES"
-        },
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR"
-        }
-    ]
+    "versionDefines": []
 }
