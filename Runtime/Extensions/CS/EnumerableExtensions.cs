@@ -17,6 +17,10 @@ namespace DevelopmentEssentials.Extensions.CS {
         }
 
         [Pure]
+        public static int IndexOfOr([NotNull] this string source, char search, int defaultIndex = 0) =>
+            source.Contains(search) ? source.IndexOf(search) : defaultIndex;
+
+        [Pure]
         public static int IndexOfOr([NotNull] this string source, string search, int defaultIndex = 0) =>
             source.Contains(search) ? source.IndexOf(search) : defaultIndex;
 

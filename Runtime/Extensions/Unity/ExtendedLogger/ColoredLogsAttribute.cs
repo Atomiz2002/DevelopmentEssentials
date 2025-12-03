@@ -6,7 +6,7 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class ColoredLogsAttribute : Attribute {
 
-        public static readonly Color DefaultColor = Color.White;
+        public static readonly Color DefaultColor = Color.Gold;
 
         public readonly Color Color;
 

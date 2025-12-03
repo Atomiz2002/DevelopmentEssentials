@@ -22,7 +22,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static System.Drawing.Color ToCsColor(this Color color) =>
             System.Drawing.Color.FromArgb((int) (color.a * 255), (int) (color.r * 255), (int) (color.g * 255), (int) (color.b * 255));
 
-        /// <returns><see cref="System.Drawing.Color"/></returns>
+        /// <returns><see cref="Color"/></returns>
         [Pure]
         public static Color ToUnityColor(this System.Drawing.Color color) => new(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f);
 
@@ -30,7 +30,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static Color A(this Color color, float alpha) => new(color.r, color.g, color.b, alpha);
 
         [Pure]
-        public static Color A(this System.Drawing.Color color, float alpha) => new(color.R, color.G, color.B, alpha);
+        public static System.Drawing.Color A(this System.Drawing.Color color, byte alpha) => System.Drawing.Color.FromArgb(alpha, color);
+
+        // TODO brightness, darker, lighter, alternative
 
         [Pure]
         public static Texture ToTexture(this Color color) {

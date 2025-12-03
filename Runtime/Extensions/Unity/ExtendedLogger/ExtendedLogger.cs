@@ -1,6 +1,6 @@
 ﻿// #define EXTENDED_LOGGER_REQUIRES_ATTRIBUTE
-// #define CUSTOM_LOGGER_PRINT_CALLER_ON_EMPTY_LOG
-// #define CUSTOM_LOGGER_PRINT_CALLER
+// #define EXTENDED_LOGGER_PRINT_CALLER_ON_EMPTY_LOG
+// #define EXTENDED_LOGGER_PRINT_CALLER
 // #define UNFORMATTED_LOGS
 
 #if UNITY_EDITOR && !SIMULATE_BUILD || ENABLE_LOGS
@@ -17,6 +17,9 @@ using UnityEngine;
 using Color = System.Drawing.Color;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
+#if EXTENDED_LOGGER_REQUIRES_ATTRIBUTE
+using System.Reflection;
+#endif
 #endif
 
 namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
@@ -189,7 +192,7 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
         /// <param name="indexes">specified by LogLater or LogNow</param>
         /// <param name="separator">specified by LogNow only</param>
         [HideInCallstack]
-        private static T LogInternal<T>(this T t, LogType logType, bool instant, object formattable, int[] indexes = null, string separator = null) {
+        private static T LogInternal<T>(this T t, LogType logType, bool instant, object formattable, int[] indexes = null, string separator = null, int indent = 0) {
             GetStackFrames(out StackFrame[] stackFrames);
 
             if (!t.EnabledLogs(stackFrames[0], out Color logColor))
@@ -197,25 +200,26 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
 
             string message = formattable.SafeString(string.Empty);
 
-#if CUSTOM_LOGGER_PRINT_CALLER
-        foreach (stackFrame f in stackFrames) {
-            if (f.GetMethod().Name == caller || f.GetMethod().DeclaringType?.Name == caller) {
-                MethodBase method = f.GetMethod();
-                string     className = method.DeclaringType?.FullName;
-                string     methodName = method.Name;
+#if EXTENDED_LOGGER_PRINT_CALLER
+            foreach (stackFrame f in stackFrames) {
+                if (f.GetMethod().Name == caller || f.GetMethod().DeclaringType?.Name == caller) {
+                    MethodBase method = f.GetMethod();
+                    string     className = method.DeclaringType?.FullName;
+                    string     methodName = method.Name;
 
-                caller = $"[{string.Join(".", className?.Colored(Color.Violet), methodName.Colored(Color.Orchid))}]";
-                break;
+                    caller = $"[{string.Join(".", className?.Colored(Color.Violet), methodName.Colored(Color.Orchid))}]";
+                    break;
+                }
             }
-        }
 
-        message = string.Join(": ", caller, message.Trim());
-#elif CUSTOM_LOGGER_PRINT_CALLER_ON_EMPTY_LOG
-        message = message.IsNullOrEmpty() ? $"[{caller}]: ".Colored(Color.Violet) : message.Trim();
+            message = string.Join(": ", caller, message.Trim());
+#elif EXTENDED_LOGGER_PRINT_CALLER_ON_EMPTY_LOG
+            message = message.IsNullOrEmpty() ? $"[{caller}]: ".Colored(Color.Violet) : message.Trim();
 #else
-            message = message.Trim();
+            if (indent == 0)
+                message = message.Trim();
 
-            if (!message.IsNullOrEmpty())
+            if (!message.IsNullOrEmpty() && !message.Contains("{0}") && indent == 0)
                 message += ": ";
 #endif
 
@@ -226,17 +230,18 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
 
             if (t is IEnumerable enumerable and not string) {
                 object[] collection            = enumerable.Cast<object>().ToArray();
-                string   coloredTypeWithLength = (t.GetType().Name().Replace("[]") + $"[{collection.Length}]").Colored(Color.Orange);
+                string   coloredTypeWithLength = (t.GetType().BetterName(Color.OrangeRed).Replace("[]").Colored(Color.Orange) + $"[{collection.Length}]").Colored(Color.Chocolate);
 
-                ConsoleLog(logType, string.Format(message, coloredTypeWithLength), logColor, t, formattable, stackFrames);
+                message.LogInternal(logType, instant, string.Format(message, coloredTypeWithLength), indexes, separator, indent);
 
+                indent++;
                 foreach (object o in collection)
-                    ConsoleLog(logType, $"   - {o.SafeString()}", logColor, o, formattable, stackFrames);
+                    o.LogInternal(logType, instant, "- ", indexes, separator, indent);
 
                 return t;
             }
 
-            message = string.Format(message, t.EnsureString("\"null\""));
+            message = "    ".Repeat(indent) + string.Format(message, t.EnsureString("\"null\""));
 
             if (instant) {
                 ConsoleLog(logType, message, logColor, t, formattable, stackFrames);
@@ -257,18 +262,19 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
         [Pure]
         private static bool EnabledLogs<T>(this T t, StackFrame stackFrame, out Color color) {
 #if EXTENDED_LOGGER_REQUIRES_ATTRIBUTE
-        MethodBase method = stackFrame.GetMethod();
-        Type       classType = method.DeclaringType!;
+            MethodBase method = stackFrame.GetMethod();
+            Type       classType = method.DeclaringType!;
 
-        bool methodHasAttribute = Attribute.IsDefined(method,    typeof(EnableCustomLogsAttribute));
-        bool classHasAttribute = Attribute.IsDefined(classType, typeof(EnableCustomLogsAttribute));
+            bool methodHasAttribute = Attribute.IsDefined(method, typeof(EnableCustomLogsAttribute));
+            bool classHasAttribute  = Attribute.IsDefined(classType, typeof(EnableCustomLogsAttribute));
 
-        color = EnableCustomLogsAttribute.DefaultColor;
+            color = ColoredLogsAttribute.DefaultColor;
 
-        if (methodHasAttribute || classHasAttribute)
+            if (!methodHasAttribute && !classHasAttribute)
+                return false;
+
             color = ((EnableCustomLogsAttribute) Attribute.GetCustomAttribute(classHasAttribute ? classType : method, typeof(EnableCustomLogsAttribute))).Color;
-        else
-            return false;
+            return true;
 #else
             color = t switch {
                 Color c              => c,
@@ -305,10 +311,10 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
         [HideInCallstack]
         private static void ConsoleLog<T>(LogType logType, string message, Color color, T t, object formattable, StackFrame[] stackFrames) {
 #if UNFORMATTED_LOGS
-        message = message.Unformatted();
+            message = message.Unformatted();
 #endif
 
-            message = message.Decolored();
+            // message = message.Decolored();
 
 #if !UNITY_EDITOR || SIMULATE_BUILD
         switch (logType) {
@@ -395,6 +401,11 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
                                "...".Colored(Color.Gray))
                            .MergeDuplicates()
                            .Join("\n") /*.Log("BBBBBBBBBBBBBB")*/;
+        }
+
+        private static T DebugLog<T>(this T t, object prefix = null) {
+            Debug.Log(prefix.SafeString() + t.SafeString());
+            return t;
         }
 
 #endif

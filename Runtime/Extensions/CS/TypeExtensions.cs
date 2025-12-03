@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Linq;
+using DevelopmentEssentials.Extensions.Unity;
 using JetBrains.Annotations;
 
 namespace DevelopmentEssentials.Extensions.CS {
@@ -7,9 +9,9 @@ namespace DevelopmentEssentials.Extensions.CS {
     public static class TypeExtensions {
 
         [Pure]
-        public static string Name(this Type type) =>
+        public static string BetterName(this Type type, Color? color = null) =>
             type.IsGenericType
-                ? $"{type.Name[..type.Name.IndexOf('`')]}<{type.GetGenericArguments().Select(Name).Join()}>"
+                ? $"{type.Name[..type.Name.IndexOfOr('`', type.Name.Length)]}<{type.GetGenericArguments().Select(x => x.BetterName(color)).Join().Colored(color)}>"
                 : type.Name;
 
         public static bool Inherits<TChild, TParent>(this TChild childClass, out TParent parentClass) where TParent : class {

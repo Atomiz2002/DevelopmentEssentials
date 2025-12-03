@@ -9,25 +9,34 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         /// <returns>&lt;color=<see cref="ToHex"/>&gt;str&lt;/color&gt;</returns>
         [Pure]
-        public static string Colored(this string source, Color color) => source.Tag("color", $"={color.ToHex()}");
+        public static string Colored(this string source, Color color, bool condition = true) => condition ? source.Tag("color", $"={color.ToHex()}") : source;
 
         [Pure]
-        public static string Colored(this string source, System.Drawing.Color color) => source.Tag("color", $"={color.ToHex()}");
+        public static string Colored(this string source, System.Drawing.Color color, bool condition = true) => condition ? source.Tag("color", $"={color.ToHex()}") : source;
+
+        /// <returns>&lt;color=<see cref="ToHex"/>&gt;str&lt;/color&gt;</returns>
+        [Pure]
+        public static string Colored(this string source, Color? color) => color.HasValue ? source.Tag("color", $"={color.Value.ToHex()}") : source;
+
+        [Pure]
+        public static string Colored(this string source, System.Drawing.Color? color) => color.HasValue ? source.Tag("color", $"={color.Value.ToHex()}") : source;
 
         [Pure]
         public static string Recolored(this string source, Color color) {
-#if UNITY_EDITOR
+#if UNITY_EDITOR // why?
             return source.Decolored().Colored(color);
-#endif
+#else
             return source;
+#endif
         }
 
         [Pure]
         public static string Recolored(this string source, System.Drawing.Color color) {
-#if UNITY_EDITOR
+#if UNITY_EDITOR // why?
             return source.Decolored().Colored(color);
-#endif
+#else
             return source;
+#endif
         }
 
         [Pure]
@@ -53,16 +62,18 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return source.IsNullOrWhiteSpace()
                 ? source
                 : $"<{tag}{setting.OtherIfNull()}>{source.Replace("\n", $"</{tag}>\n<{tag}{setting.OtherIfNull()}>")}</{tag}>";
-#endif
+#else
             return source;
+#endif
         }
 
         [Pure]
         public static string Decolored(this string source) {
 #if UNITY_EDITOR
             return Regex.Replace(Regex.Replace(source, "<color=.*?>", string.Empty), "</color>", string.Empty);
-#endif
+#else
             return source;
+#endif
         }
 
         [Pure]

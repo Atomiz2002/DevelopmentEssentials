@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable CS0168 // Variable is declared but never used
+
+using System;
 #if ENABLE_LOGS
 using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 #endif

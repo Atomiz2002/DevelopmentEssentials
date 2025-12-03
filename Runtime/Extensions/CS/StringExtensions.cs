@@ -21,7 +21,13 @@ namespace DevelopmentEssentials.Extensions.CS {
         #region Starts/Ends|With
 
         [Pure]
-        public static string PrependIf(this string source, string defaultValue, Func<string, bool> condition) => condition(source) ? defaultValue + source : source;
+        public static string Prepend(this string source, string prefix) => prefix + source;
+
+        [Pure]
+        public static string PrependIf(this string source, string defaultValue, Func<string, bool> condition) => source.PrependIf(defaultValue, condition.SafeInvoke(source));
+
+        [Pure]
+        public static string PrependIf(this string source, string defaultValue, bool condition) => condition ? defaultValue + source : source;
 
         public static string Inlined(this string str, string separator = "") => str.Replace("\n", separator);
 

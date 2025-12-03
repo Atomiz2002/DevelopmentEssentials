@@ -6,7 +6,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
     public static class ComponentExtensions {
 
         public static bool FindUIElement<T>(out T component) where T : MonoBehaviour {
-            return component = Object.FindObjectOfType<Canvas>().GetComponentInChildren<T>(true);
+            return component = Object.FindFirstObjectByType<Canvas>().GetComponentInChildren<T>(true);
         }
 
 #if DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES
