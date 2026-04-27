@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace DevelopmentEssentials.Extensions.Unity {
+namespace DevelopmentEssentials.Extensions.Unity.Physics2D {
 
     public static class Layers {
 

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Linq;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace DevelopmentEssentials.Extensions.CS {
 
@@ -17,6 +18,11 @@ namespace DevelopmentEssentials.Extensions.CS {
 
         [Pure]
         public static string Remove(this string str, string value) => str.Replace(value, string.Empty);
+
+        /// <returns>Repeats the string <paramref name="n"/> times</returns>
+        [Pure]
+        public static string Regex([NotNull] this string str, [RegexPattern] string pattern, string replacement = "") =>
+            System.Text.RegularExpressions.Regex.Replace(str, pattern, replacement);
 
         #region Starts/Ends|With
 
@@ -35,12 +41,14 @@ namespace DevelopmentEssentials.Extensions.CS {
 
         #endregion
 
+
         /// <param name="nullStringsIncluded">Whether to include literal "null" strings in the check</param>
         /// <param name="richTagsIncluded">Whether to include rich text tags in the check like color, b etc.</param>
         [Pure]
-        public static bool IsNullOrEmpty(this string str, bool nullStringsIncluded = false, bool richTagsIncluded = true) {
+        [ContractAnnotation("str:null => true")]
+        public static bool IsNullOrEmpty([CanBeNull] this string str, bool nullStringsIncluded = false, bool richTagsIncluded = true) {
             if (richTagsIncluded)
-                str = Regex.Replace(str.OtherIfNull(), "<.*?>", string.Empty);
+                str = str?.Regex("<.*?>");
 
             if (string.IsNullOrEmpty(str))
                 return true;
@@ -54,17 +62,18 @@ namespace DevelopmentEssentials.Extensions.CS {
             return false;
         }
 
-        /// <param name="nullStringsIncluded">Whether to include <c>null</c> and <c>"null"</c> strings in the check</param>
+        /// <param name="includingFakeNulls">Whether to include <c>null</c> and <c>"null"</c> strings in the check</param>
         /// <param name="richTagsIncluded">Whether to include rich text tags in the check like color, b etc.</param>
         [Pure]
-        public static bool IsNullOrWhiteSpace(this string str, bool nullStringsIncluded = false, bool richTagsIncluded = true) {
+        [ContractAnnotation("str:null => true")]
+        public static bool IsNullOrWhiteSpace([CanBeNull] this string str, bool includingFakeNulls = false, bool richTagsIncluded = true) {
             if (richTagsIncluded)
-                str = Regex.Replace(str.OtherIfNull(), "<.*?>", string.Empty);
+                str = str?.Regex("<.*?>");
 
             if (string.IsNullOrWhiteSpace(str))
                 return true;
 
-            if (nullStringsIncluded)
+            if (includingFakeNulls)
                 return str is "null" or "\"null\"";
 
             if (richTagsIncluded)
@@ -90,6 +99,9 @@ namespace DevelopmentEssentials.Extensions.CS {
                 ? enumerable.Cast<object>().Join(separator, defaultValue)
                 : source.SafeString(defaultValue);
         }
+
+        [Pure]
+        public static string RelativePath(this string fullPath) => fullPath.Replace("\\", "/").Replace(Application.dataPath, "Assets");
 
         #region Starts/Ends|With
 

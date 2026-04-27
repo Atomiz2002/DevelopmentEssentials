@@ -42,6 +42,12 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return texture;
         }
 
+#if UNITY_EDITOR && !SIMULATE_BUILD
+        [Pure]
+        // public static Color AlterEditorOnlyForNow(this Color color, float amount = .1f) => color + (Sirenix.Utilities.ColorExtensions.PerceivedLuminosity(color) < .5f ? new Color(amount, amount, amount, amount) : new(-amount, -amount, -amount, -amount));
+        public static Color AlterEditorOnlyForNow(this Color color, float amount = .1f) => color;
+#endif
+
     }
 
 }

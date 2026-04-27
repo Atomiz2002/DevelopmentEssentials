@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
 using JetBrains.Annotations;
 using Object = UnityEngine.Object;
 
@@ -237,6 +240,151 @@ namespace DevelopmentEssentials.Extensions.CS {
         #endregion
 
         public static void ClearNulls<T>(this List<T> list) => list.RemoveAll(x => x.Equals(null));
+
+        [Pure]
+        public static IEnumerable<string> ToStrings<T>(this IEnumerable<T> source, string nullValue = "\"null\"", [NotNull] string prefix = "", [NotNull] string suffix = "") =>
+            source?.Select(e => prefix + e.EnsureString(nullValue) + suffix);
+
+        [Pure]
+        public static T ElementAtOrDefault<T>(this IEnumerable<T> source, Index index, T @default = default) {
+            if (source == null)
+                return @default;
+
+            T[] iEnumerable = source as T[] ?? source.ToArray();
+            int i           = index.GetOffset(iEnumerable.Length);
+            T   element     = Enumerable.ElementAtOrDefault(iEnumerable, i);
+
+            if (element == null || element.Equals(@default))
+                return @default;
+
+            return element;
+        }
+
+        public static T SafeMin<T>(this IEnumerable<T> source, T @default = default) => source.Prepend(@default).Min();
+
+        public static float SafeMin<T1>(this IEnumerable<T1> source, Func<T1, float> selector, float @default = 0) {
+            try {
+                return source.Min(selector);
+            }
+            catch (Exception) {
+                return @default;
+            }
+        }
+
+        [Pure]
+        public static string JoinSmart(this IEnumerable collection, string separator = "", string defaultValue = "\"null\"", string prefix = "", string suffix = "") {
+            IList<string> list = collection.ToStringList(defaultValue);
+
+            int count = list.Count;
+
+            switch (count) {
+                case 0: return defaultValue; // Early exit for empty list
+                case 1: return prefix + list[0] + suffix; // Early exit for single item (no separator logic needed)
+            }
+
+            int  preLen      = prefix.Length;
+            int  sufLen      = suffix.Length;
+            int  sepLen      = separator.Length;
+            long totalLength = 0; // Use long to prevent overflow on massive logs
+
+            // Exact size calculation
+            for (int i = 0; i < count; i++) {
+                totalLength += preLen + (list[i]?.Length ?? 0) + sufLen;
+                if (i < count - 1)
+                    totalLength += sepLen;
+            }
+
+            // Single-allocation build
+            StringBuilder sb = new((int) totalLength);
+
+            for (int i = 0; i < count; i++) {
+                sb.Append(prefix);
+                sb.Append(list[i]);
+                sb.Append(suffix);
+
+                if (i < count - 1)
+                    sb.Append(separator);
+            }
+
+            return sb.ToString();
+        }
+
+        private static IList<string> ToStringList([NotNull] this IEnumerable collection, string nullValue = "\"null\"") {
+            switch (collection) {
+                case IList<string> list:             return list;
+                case IEnumerable<string> enumerable: return new List<string>(enumerable);
+                default: {
+                    // High-performance manual conversion
+                    IEnumerator  enumerator = collection.GetEnumerator();
+                    List<string> newList    = new();
+
+                    try {
+                        while (enumerator.MoveNext())
+                            newList.Add(enumerator.Current?.EnsureString(nullValue) ?? string.Empty);
+                    }
+                    finally {
+                        (enumerator as IDisposable)?.Dispose();
+                    }
+
+                    return newList;
+                }
+            }
+        }
+
+        [Pure]
+        public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, Index index, Func<T1, T2> getter, T2 @default = default) =>
+            getter(collection.ElementAtOrDefault(index)) ?? @default;
+
+        #region IDictionary
+
+        public static IDictionary<TKey, TValue> RemoveKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> predicate) =>
+            dictionary.RemoveKeys((k, _) => predicate.Invoke(k)); // InvokeSafe?
+
+        public static IDictionary<TKey, TValue> RemoveKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> predicate) {
+            List<TKey> keysToRemove = new();
+
+            foreach ((TKey key, TValue value) in dictionary)
+                if (predicate.Invoke(key, value)) // InvokeSafe?
+                    keysToRemove.Add(key);
+
+            foreach (TKey key in keysToRemove)
+                dictionary.Remove(key);
+
+            return dictionary;
+        }
+
+        [Pure]
+        public static TValue TryGetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue @default = default) =>
+            dictionary.TryGetValue(key, out TValue value) ? value : @default;
+
+        #endregion
+
+        #region Tuples
+
+        [Pure]
+        public static object[] ToArray(this ITuple tuple) {
+            if (tuple == null)
+                return null;
+
+            object[] array = new object[tuple.Length];
+
+            for (int i = 0; i < tuple.Length; i++)
+                array[i] = tuple[i];
+
+            return array;
+        }
+
+        [Pure]
+        public static T[] ToArray<T>(this ITuple tuple) {
+            T[] array = new T[tuple.Length];
+
+            for (int i = 0; i < tuple.Length; i++)
+                array[i] = (T) tuple[i];
+
+            return array;
+        }
+
+        #endregion
 
     }
 

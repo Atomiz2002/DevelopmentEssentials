@@ -20,6 +20,7 @@ using Object = UnityEngine.Object;
 #if EXTENDED_LOGGER_REQUIRES_ATTRIBUTE
 using System.Reflection;
 #endif
+
 #endif
 
 namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
@@ -266,7 +267,7 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
             Type       classType = method.DeclaringType!;
 
             bool methodHasAttribute = Attribute.IsDefined(method, typeof(EnableCustomLogsAttribute));
-            bool classHasAttribute  = Attribute.IsDefined(classType, typeof(EnableCustomLogsAttribute));
+            bool classHasAttribute = Attribute.IsDefined(classType, typeof(EnableCustomLogsAttribute));
 
             color = ColoredLogsAttribute.DefaultColor;
 

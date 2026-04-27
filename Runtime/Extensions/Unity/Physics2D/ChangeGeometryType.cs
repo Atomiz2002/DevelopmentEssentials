@@ -1,8 +1,9 @@
+#if DEVELOPMENT_ESSENTIALS_UNITY_PHYSICS2D
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace DevelopmentEssentials.Extensions.Unity {
+namespace DevelopmentEssentials.Extensions.Unity.Physics2D {
 
     public class ChangeGeometryType : MonoBehaviour {
 
@@ -13,13 +14,13 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
 #if UNITY_EDITOR
     [CustomEditor(typeof(ChangeGeometryType))]
-    public class ChangeGeometryTypeEditor : UnityEditor.Editor {
+    public class ChangeGeometryTypeEditor : Editor {
 
         private SerializedProperty worldProp;
         private SerializedProperty polygonsProp;
 
         private void OnEnable() {
-            worldProp    = serializedObject.FindProperty("World");
+            worldProp = serializedObject.FindProperty("World");
             polygonsProp = serializedObject.FindProperty("Polygons");
         }
 
@@ -42,8 +43,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
             if (!GUILayout.Button("Modify"))
                 return;
 
-            ChangeGeometryType script   = (ChangeGeometryType) target;
-            Transform          world    = script.World;
+            ChangeGeometryType script = (ChangeGeometryType) target;
+            Transform          world = script.World;
             bool               polygons = script.Polygons;
 
             foreach (CompositeCollider2D composite in world
@@ -58,3 +59,4 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #endif
 
 }
+#endif
