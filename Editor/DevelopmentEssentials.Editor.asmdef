@@ -3,14 +3,32 @@
     "allowUnsafeCode": false,
     "autoReferenced": true,
     "noEngineReferences": false,
-    "overrideReferences": false,
+    "overrideReferences": true,
     "rootNamespace": "DevelopmentEssentials",
-    "references": [],
-    "precompiledReferences": [],
+    "references": [
+        "DevelopmentEssentials",
+        "ComponentNames.Editor"
+    ],
+    "precompiledReferences": [
+        "Sirenix.Serialization.dll",
+        "Sirenix.Utilities.Editor.dll",
+        "Sirenix.OdinInspector.Attributes.dll"
+    ],
     "includePlatforms": [
         "Editor"
     ],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [
+        {
+            "name": "Unity",
+            "expression": "",
+            "define": "DEVELOPMENT_ESSENTIALS_EDITOR_COMPONENT_NAMES"
+        },
+        {
+            "name": "Unity",
+            "expression": "",
+            "define": "DEVELOPMENT_ESSENTIALS_EDITOR_ODIN_INSPECTOR"
+        }
+    ]
 }

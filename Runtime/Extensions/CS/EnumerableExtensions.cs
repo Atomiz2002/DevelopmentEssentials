@@ -40,6 +40,14 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static IEnumerable<string> ToStrings<T>(this IEnumerable<T> source, string nullValue = "\"null\"", [NotNull] string format = "{0}") =>
             source?.Select(e => string.Format(format, e.EnsureString(nullValue)));
 
+        [Pure]
+        public static IEnumerable<T> Distinct<T, T2>(this IEnumerable<T> source, Func<T, T2> keySelector) {
+            if (source == null) return Enumerable.Empty<T>();
+
+            HashSet<T2> seenKeys = new();
+            return source.Where(item => seenKeys.Add(keySelector(item)));
+        }
+
         #region Random
 
         public static int RandomIndex<T>(this IEnumerable<T> source) => new Random().Next(source.Count());
