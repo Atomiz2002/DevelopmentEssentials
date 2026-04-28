@@ -48,7 +48,7 @@ public static class FilteredConsoleLogger {
         wasEnabled = Debug.unityLogger.logEnabled;
         bool notify = !reason.IsNullOrWhiteSpace();
 
-        if (enabled == wasEnabled && notify)
+        if (enabled == wasEnabled && !notify)
             return;
 
         if (enabled) {
