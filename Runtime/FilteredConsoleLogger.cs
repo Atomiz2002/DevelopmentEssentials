@@ -29,7 +29,11 @@ public static class FilteredConsoleLogger {
         originalLogHandler  = Debug.unityLogger.logHandler;
         filteredLogHandler  = new FilteredLogger(Debug.unityLogger.logHandler);
 #if ENABLE_LOGS
+#if ONLY_EXCEPTIONS
+        ToggleLogs(true, "ENABLE_LOGS && ONLY_EXCEPTIONS");
+#else
         ToggleLogs(true, "ENABLE_LOGS");
+#endif
 #elif UNITY_EDITOR && !SIMULATE_BUILD
         ToggleLogs(true, "UNITY_EDITOR && !SIMULATE_BUILD");
 #else
@@ -159,7 +163,7 @@ public static class FilteredConsoleLogger {
 #if ONLY_EXCEPTIONS
             string stackTrace = new StackTrace().SafeString();
 
-            if (logType != LogType.Error && !stackTrace.Contains(nameof(ExtendedLogger)) && !stackTrace.Contains(".P[T] (") && !stackTrace.Contains($"{nameof(DebugHelper)}.{nameof(DebugHelper.printPriority)}"))
+            if (logType != LogType.Error && !stackTrace.Contains(nameof(ExtendedLogger)) && !stackTrace.Contains(".P[T] (") && !stackTrace.Contains($"{nameof(ExtendedLogger)}.L"))
                 return;
 #endif
 
