@@ -42,7 +42,7 @@ public static class FilteredConsoleLogger {
     [HideInCallstack]
     public static void ToggleLogs(bool enabled, string reason = "") => ToggleLogs(enabled, out _, reason);
 
-    /// <param name="reason">If not empty - logs "Logs enabled/disabled {reason}"</param>
+    /// <param name="reason">If not empty - logs "Logs enabled/disabled ({reason})"</param>
     [HideInCallstack]
     public static void ToggleLogs(bool enabled, out bool wasEnabled, string reason = "") {
         wasEnabled = Debug.unityLogger.logEnabled;
@@ -54,11 +54,11 @@ public static class FilteredConsoleLogger {
         if (enabled) {
             Debug.unityLogger.logEnabled = true;
             if (notify)
-                Debug.Log($"Logs enabled {reason}".Colored(Color.GreenYellow));
+                Debug.Log($"Logs enabled ({reason})".Colored(Color.GreenYellow));
         }
         else {
             if (notify)
-                Debug.Log($"Logs disabled {reason}".Colored(Color.Red));
+                Debug.Log($"Logs disabled ({reason})".Colored(Color.Red));
 
             Debug.unityLogger.logEnabled = false;
         }
@@ -80,16 +80,16 @@ public static class FilteredConsoleLogger {
         if (useOriginal) {
             Debug.unityLogger.logHandler = originalLogHandler;
             if (notify)
-                Debug.Log($"Using original logger {reason}".Colored(Color.GreenYellow));
+                Debug.Log($"Using original logger ({reason})".Colored(Color.GreenYellow));
         }
         else {
             Debug.unityLogger.logHandler = filteredLogHandler;
 
             if (notify)
 #if ONLY_EXCEPTIONS
-                Debug.Log($"Logging only Exceptions {reason}".Colored(Color.Red));
+                Debug.Log($"Logging only Exceptions ({reason})".Colored(Color.Red));
 #else
-                Debug.Log($"Using filtered logger {reason}".Colored(Color.DarkOrange));
+                Debug.Log($"Using filtered logger ({reason})".Colored(Color.DarkOrange));
 #endif
         }
     }
