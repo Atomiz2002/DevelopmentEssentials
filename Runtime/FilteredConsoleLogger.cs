@@ -48,11 +48,11 @@ public static class FilteredConsoleLogger {
         if (enabled) {
             Debug.unityLogger.logEnabled = true;
             if (notify)
-                Debug.Log("TSH: Logs enabled".Colored(Color.GreenYellow));
+                Debug.Log("Logs enabled".Colored(Color.GreenYellow));
         }
         else {
             if (notify)
-                Debug.Log("TSH: Logs disabled".Colored(Color.Red));
+                Debug.Log("Logs disabled".Colored(Color.Red));
 
             Debug.unityLogger.logEnabled = false;
         }
@@ -71,16 +71,16 @@ public static class FilteredConsoleLogger {
         if (useOriginal) {
             Debug.unityLogger.logHandler = originalLogHandler;
             if (notify)
-                Debug.Log("TSH: Using original logger".Colored(Color.GreenYellow));
+                Debug.Log("Using original logger".Colored(Color.GreenYellow));
         }
         else {
             Debug.unityLogger.logHandler = filteredLogHandler;
 
             if (notify)
 #if ONLY_EXCEPTIONS
-                Debug.Log("TSH: Logging only Exceptions".Colored(Color.Red));
+                Debug.Log("Logging only Exceptions".Colored(Color.Red));
 #else
-                Debug.Log("TSH: Using filtered logger".Colored(Color.DarkOrange));
+                Debug.Log("Using filtered logger".Colored(Color.DarkOrange));
 #endif
         }
     }
@@ -180,9 +180,9 @@ public static class FilteredConsoleLogger {
                 return;
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            // if (Application.isPlaying && TSHEditorSettings.FocusExceptions) {
+            // if (Application.isPlaying && EngineSettings.FocusExceptions) {
             //     if (!consoleWindow)
-            //         consoleWindow = TSHEditorSettings.TryFocusWindow("Console");
+            //         consoleWindow = EngineSettings.TryFocusWindow("Console");
             //
             //     if (!consoleWindow)
             //         EditorApplication.ExecuteMenuItem("Window/General/Console");
