@@ -3,6 +3,8 @@
 // #define CUSTOM_LOGGER_PRINT_CALLER
 // #define UNFORMATTED_LOGS
 
+using DevelopmentEssentials.Extensions.CS;
+using UnityEngine;
 #if UNITY_EDITOR && !SIMULATE_BUILD || ENABLE_LOGS
 using System;
 using System.Collections;
@@ -13,21 +15,19 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
-using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
 using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using JetBrains.Annotations;
-using UnityEngine;
 using Color = System.Drawing.Color;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 #endif
+
 public static class ExtendedLogger {
 
 #if UNITY_EDITOR && !SIMULATE_BUILD || ENABLE_LOGS
-
     private static readonly Dictionary<string, List<object>> logQueue = new();
 
     #region Log Info, Error, Exception
@@ -178,7 +178,7 @@ public static class ExtendedLogger {
         LogType logType = LogType.Log) {
 
         func ??= element => (T2) (object) element.ToString();
-        t    =   t.ToArray();
+        t = t.ToArray();
 
         t.Select(func).LogInternal(logType, true, formattable);
 
@@ -251,7 +251,7 @@ public static class ExtendedLogger {
         }
 
         if (t is IEnumerable enumerable and not string) {
-            object[] collection            = enumerable.Cast<object>().ToArray();
+            object[] collection = enumerable.Cast<object>().ToArray();
             string   coloredTypeWithLength = (t.GetType().Name().Replace("[]") + $"[{collection.Length}]").Colored(Color.Orange);
 
             ConsoleLog(logType, string.Format(message, coloredTypeWithLength), logColor, t, formattable, stackFrames);
@@ -395,11 +395,11 @@ public static class ExtendedLogger {
         foreach (Match m in Regex.Matches(message, @" in (file:line:column )?(\w.*):(\d+)(:\d+)?")) {
             try {
                 string fullMatch = m.Value;
-                string path      = m.Groups[2].Value.Trim();
-                string name      = Path.GetFileName(path); // can throw for invalid chars
-                string line      = m.Groups[3].Value;
-                string link      = name.Link(path, line);
-                string replaced  = fullMatch.Replace(name, link);
+                string path = m.Groups[2].Value.Trim();
+                string name = Path.GetFileName(path); // can throw for invalid chars
+                string line = m.Groups[3].Value;
+                string link = name.Link(path, line);
+                string replaced = fullMatch.Replace(name, link);
                 message = message.Replace(fullMatch, replaced);
             }
             catch {}
@@ -426,8 +426,9 @@ public static class ExtendedLogger {
     #endregion
 
 #else
-    public static void LogEx       <T>(this T t, object formattable = null) => DebugHelper.printException(Formatted(t, formattable));
-    public static void LogException<T>(this T t, object formattable = null) => DebugHelper.printException(Formatted(t, formattable));
+
+    public static void LogEx<T>(this T t, object formattable = null)        => Debug.LogException(new(Formatted(t, formattable)));
+    public static void LogException<T>(this T t, object formattable = null) => Debug.LogException(new(Formatted(t, formattable)));
 
     private static string Formatted<T>(T t, object formattable) {
         string message = formattable.SafeString().Trim();

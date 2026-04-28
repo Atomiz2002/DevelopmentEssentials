@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
 using UnityEditor;
 using UnityEngine;
@@ -27,43 +28,51 @@ public static class FilteredConsoleLogger {
         usingOriginalLogger = true;
         originalLogHandler  = Debug.unityLogger.logHandler;
         filteredLogHandler  = new FilteredLogger(Debug.unityLogger.logHandler);
-#if ENABLE_LOGS || UNITY_EDITOR
-        ToggleLogs(true);
+#if ENABLE_LOGS
+        ToggleLogs(true, "ENABLE_LOGS");
+#elif UNITY_EDITOR && !SIMULATE_BUILD
+        ToggleLogs(true, "UNITY_EDITOR && !SIMULATE_BUILD");
 #else
-        ToggleLogs(false);
+        ToggleLogs(false, "!ENABLE_LOGS || SIMULATE_BUILD");
 #endif
         ToggleLogger(false);
     }
 
+    /// <inheritdoc cref="ToggleLogs(bool, out bool, string)"/>
     [HideInCallstack]
-    public static void ToggleLogs(bool enabled, bool notify = true) => ToggleLogs(enabled, out _, notify);
+    public static void ToggleLogs(bool enabled, string reason = "") => ToggleLogs(enabled, out _, reason);
 
+    /// <param name="reason">If not empty - logs "Logs enabled/disabled {reason}"</param>
     [HideInCallstack]
-    public static void ToggleLogs(bool enabled, out bool wasEnabled, bool notify = true) {
+    public static void ToggleLogs(bool enabled, out bool wasEnabled, string reason = "") {
         wasEnabled = Debug.unityLogger.logEnabled;
+        bool notify = !reason.IsNullOrWhiteSpace();
 
-        if (enabled == wasEnabled && !notify)
+        if (enabled == wasEnabled && notify)
             return;
 
         if (enabled) {
             Debug.unityLogger.logEnabled = true;
             if (notify)
-                Debug.Log("Logs enabled".Colored(Color.GreenYellow));
+                Debug.Log($"Logs enabled {reason}".Colored(Color.GreenYellow));
         }
         else {
             if (notify)
-                Debug.Log("Logs disabled".Colored(Color.Red));
+                Debug.Log($"Logs disabled {reason}".Colored(Color.Red));
 
             Debug.unityLogger.logEnabled = false;
         }
     }
 
+    /// <inheritdoc cref="ToggleLogs(bool, out bool, string)"/>
     [HideInCallstack]
-    public static void ToggleLogger(bool useOriginal, bool notify = true) => ToggleLogger(useOriginal, out _, notify);
+    public static void ToggleLogger(bool useOriginal, string reason = "") => ToggleLogger(useOriginal, out _, reason);
 
+    /// <inheritdoc cref="ToggleLogs(bool, out bool, string)"/>
     [HideInCallstack]
-    public static void ToggleLogger(bool useOriginal, out bool wasOriginal, bool notify = true) {
+    public static void ToggleLogger(bool useOriginal, out bool wasOriginal, string reason = "") {
         wasOriginal = usingOriginalLogger;
+        bool notify = !reason.IsNullOrWhiteSpace();
 
         if (useOriginal == wasOriginal && !notify)
             return;
@@ -71,16 +80,16 @@ public static class FilteredConsoleLogger {
         if (useOriginal) {
             Debug.unityLogger.logHandler = originalLogHandler;
             if (notify)
-                Debug.Log("Using original logger".Colored(Color.GreenYellow));
+                Debug.Log($"Using original logger {reason}".Colored(Color.GreenYellow));
         }
         else {
             Debug.unityLogger.logHandler = filteredLogHandler;
 
             if (notify)
 #if ONLY_EXCEPTIONS
-                Debug.Log("Logging only Exceptions".Colored(Color.Red));
+                Debug.Log($"Logging only Exceptions {reason}".Colored(Color.Red));
 #else
-                Debug.Log("Using filtered logger".Colored(Color.DarkOrange));
+                Debug.Log($"Using filtered logger {reason}".Colored(Color.DarkOrange));
 #endif
         }
     }
@@ -155,8 +164,8 @@ public static class FilteredConsoleLogger {
 #endif
 
             switch (logType) {
-                case LogType.Log when blacklist.Any(bl => message.Contains(bl)):
-                case LogType.Error when blacklistError.Any(bl => message.Contains(bl)):
+                case LogType.Log when blacklist.Any(message.Contains):
+                case LogType.Error when blacklistError.Any(message.Contains):
                     return;
                 default:
                     originalLogHandler.LogFormat(logType, context, format, args);
