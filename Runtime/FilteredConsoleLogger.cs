@@ -33,7 +33,7 @@ public static class FilteredConsoleLogger {
 #elif UNITY_EDITOR && !SIMULATE_BUILD
         ToggleLogs(true, "UNITY_EDITOR && !SIMULATE_BUILD");
 #else
-        ToggleLogs(false, "!ENABLE_LOGS || SIMULATE_BUILD");
+        ToggleLogs(false, "SIMULATE_BUILD");
 #endif
         ToggleLogger(false);
     }
