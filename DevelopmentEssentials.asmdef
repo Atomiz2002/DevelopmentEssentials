@@ -5,18 +5,10 @@
     "noEngineReferences": false,
     "overrideReferences": true,
     "rootNamespace": "DevelopmentEssentials",
-    "references": [
-        "ComponentNames"
-    ],
+    "references": [],
     "precompiledReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES"
-        }
-    ]
+    "versionDefines": []
 }
