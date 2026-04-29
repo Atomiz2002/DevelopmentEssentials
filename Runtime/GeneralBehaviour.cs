@@ -3,13 +3,13 @@ using DevelopmentEssentials.Extensions.Unity;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
 
 namespace DevelopmentEssentials {
 
-#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
     [HideMonoScript]
 #endif
     public abstract class GeneralBehaviour : MonoBehaviour {
@@ -29,7 +29,7 @@ namespace DevelopmentEssentials {
         [Conditional("UNITY_EDITOR")]
         protected virtual void Reference() {}
 
-#if DEVELOPMENT_ESSENTIALS_ODIN_INSPECTOR
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
         [OnInspectorInit]
 #endif
         protected virtual void OnValidate() {
@@ -40,7 +40,7 @@ namespace DevelopmentEssentials {
             Reference();
         }
 
-#if DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
         protected bool TryGetComponentAbove<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.TryGetComponentAbove(ref component, name, @override);
         protected bool TryGetComponentBelow<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.TryGetComponentBelow(ref component, name, @override);
         protected bool TryGetComponent<T>(ref T component, string name = null, bool @override = false) where T : Component      => gameObject.TryGetComponent(ref component, name, @override);

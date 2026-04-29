@@ -1,4 +1,4 @@
-#if DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES
+#if DEVELOPMENT_ESSENTIALS_EDITOR_COMPONENT_NAMES
 using System.Linq;
 using System.Reflection;
 using ComponentNames.Editor;

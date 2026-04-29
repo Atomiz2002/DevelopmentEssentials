@@ -9,7 +9,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return component = Object.FindFirstObjectByType<Canvas>().GetComponentInChildren<T>(true);
         }
 
-#if DEVELOPMENT_ESSENTIALS_COMPONENT_NAMES
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
         public static bool TryAddComponent<T>(this Component c, out T component, string name = null) where T : Component => c.gameObject.TryAddComponent(out component, name);
 #else
         public static bool TryAddComponent<T>(this Component c, out T component) where T : Component => c.gameObject.TryAddComponent(out component);

@@ -1,4 +1,5 @@
 ﻿using UnityEditor;
+using static AsmdefDependencies;
 
 namespace DevelopmentEssentials.Editor.DependencyManagement {
 
@@ -6,8 +7,12 @@ namespace DevelopmentEssentials.Editor.DependencyManagement {
 
         private static readonly AsmdefDependencies runtimeDependencies = new AsmdefDependencies("DevelopmentEssentials.asmdef", "DEVELOPMENT_ESSENTIALS_RUNTIME_")
             .SetSoftDependencies(
+                new("UNI_TASK",
+                    "UniTask"),
                 new("COMPONENT_NAMES",
-                    "ComponentNames"));
+                    "ComponentNames"),
+                new("ODIN_INSPECTOR",
+                    "Sirenix.OdinInspector.Attributes.dll"));
 
         private static readonly AsmdefDependencies editorDependencies = new AsmdefDependencies("DevelopmentEssentials.Editor.asmdef", "DEVELOPMENT_ESSENTIALS_EDITOR_")
             .SetHardDependencies(
@@ -15,7 +20,8 @@ namespace DevelopmentEssentials.Editor.DependencyManagement {
             .SetSoftDependencies(
                 new("COMPONENT_NAMES",
                     "ComponentNames.Editor"),
-                new AsmdefDependencies.SoftAsmdefDependency("ODIN_INSPECTOR",
+                new SoftAsmdefDependency("ODIN_INSPECTOR",
+                    "Sirenix.OdinInspector.Editor.dll",
                     "Sirenix.OdinInspector.Attributes.dll",
                     "Sirenix.Serialization.dll",
                     "Sirenix.Utilities.Editor.dll"));

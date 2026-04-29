@@ -19,7 +19,7 @@ namespace DevelopmentEssentials.Editor.DependencyManagement {
                          .Select(AssetDatabase.GUIDToAssetPath)
                          .Where(p => asmdefs.Contains(Path.GetFileNameWithoutExtension(p)))) {
                 AsmdefData asmdef = new(path);
-                asmdef.ClearReferences();
+                asmdef.ClearReferencesAndDefines();
                 asmdef.WriteToFile(path);
             }
 

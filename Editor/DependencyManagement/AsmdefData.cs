@@ -45,7 +45,8 @@ public class AsmdefData {
         versionDefines = versionDefines.Distinct(x => x.define).ToList();
     }
 
-    public void ClearReferences() {
+    public void ClearReferencesAndDefines() {
+        versionDefines?.Clear();
         references?.Clear();
         precompiledReferences?.Clear();
     }

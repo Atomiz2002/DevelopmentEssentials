@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace DevelopmentEssentials.Extensions.Attributes {
+namespace DevelopmentEssentials.Attributes {
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public class ColoredAttribute : PropertyAttribute {

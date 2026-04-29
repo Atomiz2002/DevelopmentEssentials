@@ -43,8 +43,10 @@ public class AsmdefDependencies {
         AsmdefData asmdefData = new(packageAsmdefPath);
         bool       modified   = false;
 
-        // if (asmdefData.references?.Count > 0 || asmdefData.precompiledReferences?.Count > 0)
-        //     modified = true;
+        if (asmdefData.references?.Count > 0 || asmdefData.precompiledReferences?.Count > 0)
+            modified = true;
+
+        asmdefData.ClearReferencesAndDefines();
 
         foreach (HardAsmdefDependency hardDependency in hardDependencies)
             ReferenceHardDependency(asmdefData, ref modified, hardDependency);
@@ -90,7 +92,7 @@ public class AsmdefDependencies {
         bool foundAllDependencies = true;
 
         foreach ((string dependency, bool located) in softDependency.dependencies) {
-            AsmdefData.VersionDefine missing = AsmdefData.VersionDefine.Missing(dependency, softDependency.define);
+            AsmdefData.VersionDefine missing = AsmdefData.VersionDefine.Missing(softDependency.define, dependency);
 
             if (located) {
                 asmdefData.versionDefines.RemoveAll(vd => vd.define == missing.define);

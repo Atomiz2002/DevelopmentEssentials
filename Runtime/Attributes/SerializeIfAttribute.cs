@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace DevelopmentEssentials.Extensions.Attributes {
+namespace DevelopmentEssentials.Attributes {
 
     public abstract class SerializeIfAttributes {
 

@@ -3,7 +3,7 @@ using System.Reflection;
 using UnityEngine;
 using static System.Attribute;
 
-namespace DevelopmentEssentials.Extensions.Attributes {
+namespace DevelopmentEssentials.Attributes {
 
     public static class Get {
 
