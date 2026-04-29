@@ -8,6 +8,7 @@ using Color = System.Drawing.Color;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 #if ONLY_EXCEPTIONS
+using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using System.Diagnostics;
 #endif
 
@@ -154,19 +155,19 @@ namespace DevelopmentEssentials {
                 string message = string.Format(format, args);
 
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
-            Sentry.SentrySdk.AddBreadcrumb(message.Unformatted(), level: logType switch {
-                LogType.Error   => Sentry.BreadcrumbLevel.Error,
-                LogType.Assert  => Sentry.BreadcrumbLevel.Debug,
-                LogType.Warning => Sentry.BreadcrumbLevel.Warning,
-                _               => Sentry.BreadcrumbLevel.Info
-            });
+            // Sentry.SentrySdk.AddBreadcrumb(message.Unformatted(), level: logType switch {
+            //     LogType.Error   => Sentry.BreadcrumbLevel.Error,
+            //     LogType.Assert  => Sentry.BreadcrumbLevel.Debug,
+            //     LogType.Warning => Sentry.BreadcrumbLevel.Warning,
+            //     _               => Sentry.BreadcrumbLevel.Info
+            // });
 #endif
 
 #if ONLY_EXCEPTIONS
-            string stackTrace = new StackTrace().SafeString();
+                string stackTrace = new StackTrace().SafeString();
 
-            if (logType != LogType.Error && !stackTrace.Contains(nameof(ExtendedLogger)) && !stackTrace.Contains(".P[T] (") && !stackTrace.Contains($"{nameof(ExtendedLogger)}.L"))
-                return;
+                if (logType != LogType.Error && !stackTrace.Contains(nameof(ExtendedLogger)) && !stackTrace.Contains(".P[T] (") && !stackTrace.Contains($"{nameof(ExtendedLogger)}.L"))
+                    return;
 #endif
 
                 switch (logType) {
@@ -182,9 +183,9 @@ namespace DevelopmentEssentials {
             [HideInCallstack]
             public void LogException(Exception exception, Object context) {
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD // TODO test added sentry tags
-            exception.Data["username"] = StateSystem.I.stateRemote.profile.username;
-            exception.Data["email"] = StateSystem.I.stateLocal.email;
-            Sentry.SentrySdk.CaptureException(exception);
+            // exception.Data["username"] = StateSystem.I.stateRemote.profile.username;
+            // exception.Data["email"] = StateSystem.I.stateLocal.email;
+            // Sentry.SentrySdk.CaptureException(exception);
 #endif
 
 #if !ENABLE_LOGS && !(UNITY_EDITOR && !SIMULATE_BUILD)
@@ -193,16 +194,6 @@ namespace DevelopmentEssentials {
 
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
-
-#if UNITY_EDITOR && !SIMULATE_BUILD
-                // if (Application.isPlaying && EngineSettings.FocusExceptions) {
-                //     if (!consoleWindow)
-                //         consoleWindow = EngineSettings.TryFocusWindow("Console");
-                //
-                //     if (!consoleWindow)
-                //         EditorApplication.ExecuteMenuItem("Window/General/Console");
-                // }
-#endif
 
                 // string message = exception.Message.Unformatted();
                 // originalLogHandler.LogException(new(message, exception), context);
@@ -220,11 +211,11 @@ namespace DevelopmentEssentials {
 #endif
             }
 
-            private class _ : Exception {
-
-                public _(string message) : base(message) {}
-
-            }
+            // private class _ : Exception {
+            //
+            //     public _(string message) : base(message) {}
+            //
+            // }
 
         }
 
