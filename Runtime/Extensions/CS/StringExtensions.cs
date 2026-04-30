@@ -1,13 +1,25 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 using UnityEngine;
 
 namespace DevelopmentEssentials.Extensions.CS {
 
     public static class StringExtensions {
+
+        private static readonly HashSet<string> ReservedKeywords = new() {
+            "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked",
+            "class", "const", "continue", "decimal", "default", "delegate", "do", "double", "else",
+            "enum", "event", "explicit", "extern", "false", "finally", "fixed", "float", "for",
+            "foreach", "goto", "if", "implicit", "in", "int", "interface", "internal", "is", "lock",
+            "long", "namespace", "new", "null", "object", "operator", "out", "override", "params",
+            "private", "protected", "public", "readonly", "ref", "return", "sbyte", "sealed",
+            "short", "sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+            "true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort", "using",
+            "virtual", "void", "volatile", "while"
+        };
 
         /// <returns>Repeats the string <paramref name="n"/> times</returns>
         [Pure]
@@ -98,6 +110,25 @@ namespace DevelopmentEssentials.Extensions.CS {
             return source is IEnumerable enumerable and not string
                 ? enumerable.Cast<object>().Join(separator, defaultValue)
                 : source.SafeString(defaultValue);
+        }
+
+        [Pure]
+        public static string RemoveWhitespace(this string source) => new(source.Where(c => !char.IsWhiteSpace(c)).ToArray());
+
+        [Pure]
+        public static bool IsValidClassName(this string name) {
+            if (name.IsNullOrWhiteSpace())
+                return false;
+
+            // Must start with a letter or underscore
+            if (!name[0].IsLetter() && name[0] != '_')
+                return false;
+
+            // Remaining must be letter, digit, or underscore
+            if (name.Any(c => !c.IsLetterOrDigit() && c != '_'))
+                return false;
+
+            return !ReservedKeywords.Contains(name);
         }
 
         [Pure]
@@ -223,6 +254,16 @@ namespace DevelopmentEssentials.Extensions.CS {
 
             return source[..endIndex] + append;
         }
+
+        #endregion
+
+        #region char
+
+        [Pure]
+        public static bool IsLetter(this char c) => char.IsLetter(c);
+
+        [Pure]
+        public static bool IsLetterOrDigit(this char c) => char.IsLetterOrDigit(c);
 
         #endregion
 
