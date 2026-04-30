@@ -20,11 +20,11 @@ namespace DevelopmentEssentials.Editor {
 
         private static float AfterInspectorRootEditorHeaderGUI(Component component, Rect headerRect, bool headerIsSelected, bool supportsRichText) {
             const int downsize = 4;
-            headerRect.x += headerRect.width - headerRect.height * 4;
-            headerRect.x += downsize * 2;
-            headerRect.y += downsize;
+            headerRect.x      += headerRect.width - headerRect.height * 4;
+            headerRect.x      += downsize * 2;
+            headerRect.y      += downsize;
             headerRect.height -= downsize * 2;
-            headerRect.width = headerRect.height;
+            headerRect.width  =  headerRect.height;
 
             if (component.GetType()
                 .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)

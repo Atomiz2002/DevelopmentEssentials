@@ -9,7 +9,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         /// Trims the pixels of the specified color (default = transparent) from a Texture, returning a new Texture2D.
         public static Texture2D Trimmed(this Texture texture, bool uniform = false, Color color = default) =>
-            !texture ? null : Trimmed(texture.Read(), uniform, color);
+            !texture ? null : texture.Read().Trimmed(uniform, color);
 
         public static Texture2D Trimmed(this Texture2D texture, bool uniform = false, Color color = default) {
             if (!texture)
@@ -80,7 +80,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         public static void Trim(this Texture2D texture, bool uniform = false) {
-            Texture2D newTexture = Trimmed(texture, uniform);
+            Texture2D newTexture = texture.Trimmed(uniform);
             texture.Reinitialize(newTexture.width, newTexture.height);
             texture.SetPixels(newTexture.GetPixels());
             texture.Apply();

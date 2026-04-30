@@ -20,7 +20,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         /// <param name="referenceAngle">Defaults to Vector2.right</param>
         /// <returns>The result of the direction angle relative to the referenced direction</returns>
         public static T BisectAngle<T>(this Vector2Int direction, T left, T right, Vector2Int referenceAngle = default) =>
-            BisectAngle(direction.V2(), left, right, referenceAngle);
+            direction.V2().BisectAngle(left, right, referenceAngle);
 
         /// <param name="referenceAngle">Defaults to Vector2.right</param>
         /// <returns>The result of the direction angle relative to the referenced direction</returns>
