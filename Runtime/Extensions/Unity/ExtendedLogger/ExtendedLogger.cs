@@ -391,7 +391,7 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
             if (string.IsNullOrEmpty(message))
                 return;
 
-            foreach (Match m in Regex.Matches(message, @" in (file:line:column )?(\w.*):(\d+)(:\d+)?")) {
+            foreach (Match m in Regex.Matches(message, @" in (file:line:column )?(\w.*?):(\d+)(:\d+)?")) {
                 try {
                     string fullMatch = m.Value;
                     string path      = m.Groups[2].Value.Trim();
