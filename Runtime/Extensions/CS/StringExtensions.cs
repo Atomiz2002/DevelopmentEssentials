@@ -101,7 +101,10 @@ namespace DevelopmentEssentials.Extensions.CS {
         }
 
         [Pure]
-        public static string RelativePath(this string fullPath) => fullPath.Replace("\\", "/").Replace(Application.dataPath, "Assets");
+        public static string ReplaceSlashes(this string path) => path.Replace("\\", "/");
+
+        [Pure]
+        public static string RelativePath(this string fullPath) => fullPath.ReplaceSlashes().Replace(Application.dataPath, "Assets");
 
         #region Starts/Ends|With
 
