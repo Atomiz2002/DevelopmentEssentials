@@ -48,6 +48,12 @@ namespace DevelopmentEssentials.Extensions.CS {
             return source.Where(item => seenKeys.Add(keySelector(item)));
         }
 
+        [Pure]
+        public static int Count<T>(this IEnumerable<T> source, T element) => source.Count(x => EqualityComparer<T>.Default.Equals(x, element));
+
+        [Pure]
+        public static bool HasDuplicates<T>(this IEnumerable<T> source, T element) => source.Count(element) > 1;
+
         #region Random
 
         public static int RandomIndex<T>(this IEnumerable<T> source) => new Random().Next(source.Count());
