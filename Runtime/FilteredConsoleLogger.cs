@@ -152,7 +152,7 @@ namespace DevelopmentEssentials {
 
             [HideInCallstack]
             public void LogFormat(LogType logType, Object context, string format, params object[] args) {
-                string message = string.Format(format, args);
+                string message = string.Format(format, args).LinkPaths();
 
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
             // Sentry.SentrySdk.AddBreadcrumb(message.Unformatted(), level: logType switch {
@@ -183,22 +183,21 @@ namespace DevelopmentEssentials {
             [HideInCallstack]
             public void LogException(Exception exception, Object context) {
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD // TODO test added sentry tags
-            // exception.Data["username"] = StateSystem.I.stateRemote.profile.username;
-            // exception.Data["email"] = StateSystem.I.stateLocal.email;
-            // Sentry.SentrySdk.CaptureException(exception);
+                // exception.Data["username"] = StateSystem.I.stateRemote.profile.username;
+                // exception.Data["email"] = StateSystem.I.stateLocal.email;
+                // Sentry.SentrySdk.CaptureException(exception);
 #endif
 
 #if !ENABLE_LOGS && !(UNITY_EDITOR && !SIMULATE_BUILD)
-            return;
+                return;
 #endif
 
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                // string message = exception.Message.Unformatted();
-                // originalLogHandler.LogException(new(message, exception), context);
+                originalLogHandler.LogException(new _(exception.Message.Unformatted().LinkPaths(), exception), context);
 
-                originalLogHandler.LogException(exception, context);
+                // originalLogHandler.LogException(exception, context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
@@ -211,11 +210,12 @@ namespace DevelopmentEssentials {
 #endif
             }
 
-            // private class _ : Exception {
-            //
-            //     public _(string message) : base(message) {}
-            //
-            // }
+            private class _ : Exception {
+
+                // public _(string message) : base(message) {}
+                public _(string message, Exception innerException) : base(message, innerException) {}
+
+            }
 
         }
 

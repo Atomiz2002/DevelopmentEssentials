@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO;
+using System.Text.RegularExpressions;
 using DevelopmentEssentials.Extensions.CS;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -83,6 +84,28 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #else
         return source;
 #endif
+        }
+
+        /// Formats the <paramref name="source"/> by replacing all locally accessible paths with hyperlinks
+        [Pure]
+        public static string LinkPaths(this string source) {
+            if (string.IsNullOrEmpty(source))
+                return source;
+
+            foreach (Match m in Regex.Matches(source, @" in (file:line:column )?(\w.*?):(\d+)(:\d+)?")) {
+                try {
+                    string fullMatch = m.Value;
+                    string path      = m.Groups[2].Value.Trim();
+                    string name      = Path.GetFileName(path); // can throw for invalid chars
+                    string line      = m.Groups[3].Value;
+                    string link      = name.Link(path, line);
+                    string replaced  = fullMatch.Replace(name, link);
+                    source = source.Replace(fullMatch, replaced);
+                }
+                catch {}
+            }
+
+            return source;
         }
 
     }

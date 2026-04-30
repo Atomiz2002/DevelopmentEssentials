@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
+#if UNITY_EDITOR && !SIMULATE_BUILD
+using System.Reflection;
+#endif
 
 namespace DevelopmentEssentials.Extensions.CS {
 
@@ -36,8 +39,6 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static string Regex([NotNull] this string str, [RegexPattern] string pattern, string replacement = "") =>
             System.Text.RegularExpressions.Regex.Replace(str, pattern, replacement);
 
-        #region Starts/Ends|With
-
         [Pure]
         public static string Prepend(this string source, string prefix) => prefix + source;
 
@@ -47,12 +48,43 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static string PrependIf(this string source, string defaultValue, bool condition) => condition ? defaultValue + source : source;
 
+        [Pure]
         public static string Inlined(this string str, string separator = "") => str.Replace("\n", separator);
 
-        public static string Concise(this string str) => str.Replace("  ", " ");
+        [Pure]
+        public static string Concise(this string str) {
+            while (str.Contains("  "))
+                str = str.Replace("  ", " ");
 
-        #endregion
+            return str;
+        }
 
+        [Pure]
+        public static string FullString(this object obj, string separator = "\n") {
+#if UNITY_EDITOR && !SIMULATE_BUILD
+            if (obj == null)
+                return "null";
+
+            Type        type   = obj.GetType();
+            FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            string      result = $"{type.Name}:{(separator.Contains("\n") ? "\n" : " ")}"; // name: a, b, c | name:↵a↵b↵c
+
+            for (int i = 0; i < fields.Length; i++) {
+                FieldInfo f = fields[i];
+                result += $"{f.Name}: {f.GetValue(obj).SafeString()}";
+
+                if (i < fields.Length - 1)
+                    result += separator;
+            }
+
+            return result;
+#else
+            return obj?.ToString() ?? "null";
+#endif
+        }
+
+        [Pure]
+        public static string Display(this object obj, string objName, string separator = ": ") => objName + separator + obj.SafeString();
 
         /// <param name="nullStringsIncluded">Whether to include literal "null" strings in the check</param>
         /// <param name="richTagsIncluded">Whether to include rich text tags in the check like color, b etc.</param>
@@ -100,15 +132,14 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure] [NotNull]
         public static string OtherIfNull([CanBeNull] this string source, [NotNull] string other = "") => source ?? other;
 
-        /// Converts enumerables into strings by calling ToString on each element<br/>
-        /// <see cref="SafeString"/> does not call ToString on the elements
-        [Pure]
+        /// Stringifies enumerables elements
+        [Pure] [ContractAnnotation("source:null,defaultValue:null => true")]
         public static string EnsureString<T>(this T source, string separator = ", ", string defaultValue = "\"null\"") {
             if (source == null)
                 return defaultValue;
 
             return source is IEnumerable enumerable and not string
-                ? enumerable.Cast<object>().Join(separator, defaultValue)
+                ? enumerable.JoinSmart(separator, defaultValue)
                 : source.SafeString(defaultValue);
         }
 
@@ -155,8 +186,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         /// <seealso cref="EndAt"/>
         /// <seealso cref="EndAtLast"/>
         [Pure]
-        public static string StartAt([NotNull] this string source, string search = "", bool inclusive = true, string prepend = "") {
-            search ??= string.Empty;
+        public static string StartAt(this string source, string search = "", bool inclusive = true, string prepend = "") {
+            if (search == null)
+                return source;
+
+            source ??= string.Empty;
+
             int startIndex = source.IndexOf(search);
 
             if (startIndex == -1)
@@ -184,8 +219,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         /// <seealso cref="EndAt"/>
         /// <seealso cref="EndAtLast"/>
         [Pure]
-        public static string StartAtLast([NotNull] this string source, string search = "", bool inclusive = true, string prepend = "") {
-            search ??= string.Empty;
+        public static string StartAtLast(this string source, string search = null, bool inclusive = true, string prepend = "") {
+            if (search == null)
+                return source;
+
+            source ??= string.Empty;
+
             int startIndex = source.LastIndexOf(search);
 
             if (startIndex == -1)
@@ -213,8 +252,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         /// <seealso cref="StartAtLast"/>
         /// <seealso cref="EndAtLast"/>
         [Pure]
-        public static string EndAt([NotNull] this string source, string search = "", bool inclusive = true, string append = "") {
-            search ??= string.Empty;
+        public static string EndAt(this string source, string search = null, bool inclusive = true, string append = "") {
+            if (search == null)
+                return source;
+
+            source ??= string.Empty;
+
             int endIndex = source.IndexOf(search);
 
             if (endIndex == -1)
@@ -242,8 +285,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         /// <seealso cref="StartAtLast"/>
         /// <seealso cref="EndAt"/>
         [Pure]
-        public static string EndAtLast([NotNull] this string source, string search = "", bool inclusive = true, string append = "") {
-            search ??= string.Empty;
+        public static string EndAtLast(this string source, string search = "", bool inclusive = true, string append = "") {
+            if (search == null)
+                return source;
+
+            source ??= string.Empty;
+
             int endIndex = source.LastIndexOf(search);
 
             if (endIndex == -1)

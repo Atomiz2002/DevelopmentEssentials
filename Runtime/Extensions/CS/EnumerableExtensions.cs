@@ -11,35 +11,6 @@ namespace DevelopmentEssentials.Extensions.CS {
 
     public static class EnumerableExtensions {
 
-        #region Index
-
-        [Pure]
-        public static int IndexOf<T>(this IEnumerable<T> collection, T element, int @default = -1) {
-            int index = collection.ToList().IndexOf(element);
-            return index == -1 ? @default : index;
-        }
-
-        [Pure]
-        public static int IndexOfOr([NotNull] this string source, char search, int defaultIndex = 0) =>
-            source.Contains(search) ? source.IndexOf(search) : defaultIndex;
-
-        [Pure]
-        public static int IndexOfOr([NotNull] this string source, string search, int defaultIndex = 0) =>
-            source.Contains(search) ? source.IndexOf(search) : defaultIndex;
-
-        [Pure]
-        public static int LastIndexOfOr([NotNull] this string source, string search, int defaultIndex = 0) =>
-            source.Contains(search) ? source.LastIndexOf(search) : defaultIndex;
-
-        [Pure]
-        public static bool IsIndexWithin<T>(this IEnumerable<T> enumerable, int index) => index >= 0 && index < enumerable.Count();
-
-        #endregion
-
-        [Pure]
-        public static IEnumerable<string> ToStrings<T>(this IEnumerable<T> source, string nullValue = "\"null\"", [NotNull] string format = "{0}") =>
-            source?.Select(e => string.Format(format, e.EnsureString(nullValue)));
-
         [Pure]
         public static IEnumerable<T> Distinct<T, T2>(this IEnumerable<T> source, Func<T, T2> keySelector) {
             if (source == null) return Enumerable.Empty<T>();
@@ -53,72 +24,6 @@ namespace DevelopmentEssentials.Extensions.CS {
 
         [Pure]
         public static bool HasDuplicates<T>(this IEnumerable<T> source, T element) => source.Count(element) > 1;
-
-        #region Random
-
-        public static int RandomIndex<T>(this IEnumerable<T> source) => new Random().Next(source.Count());
-
-        /// <param name="percentage">The percentage of times to return a random element instead of the default value</param>
-        /// <example>if percentage = 90<br/>returns a random element 90% of the time<br/>returns the default value 10% of the time</example>
-        public static T Random<T>(this IEnumerable<T> source, T @default = default, int percentage = 100) {
-            if (new Random().Next(100) >= percentage)
-                return @default;
-
-            IEnumerable<T> enumerable = source as T[] ?? source.ToArray();
-            return enumerable.ElementAtOrDefault(enumerable.RandomIndex(), @default);
-        }
-
-        #endregion
-
-        #region OrDefault
-
-        [Pure]
-        public static T ElementAtOrDefault<T>(this IEnumerable<T> source, int index, T @default) {
-            if (source == null) return @default;
-
-            T element = source.ElementAtOrDefault(index);
-
-            if (element == null || element.Equals(@default))
-                return @default;
-
-            return element;
-        }
-
-        [Pure]
-        public static T ElementAtOrDefaultValue<T>(this IEnumerable<T> collection, int index, T @default = default) =>
-            collection.ElementAtOrDefault(index) ?? @default;
-
-        [Pure]
-        public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, int index, Func<T1, T2> getter, T2 @default = default) =>
-            getter(collection.ElementAtOrDefault(index)) ?? @default;
-
-        #endregion
-
-        #region Safe
-
-        [Pure]
-        public static IEnumerable<T> Safe<T>(this IEnumerable<T> source) => source ?? Enumerable.Empty<T>();
-
-        [Pure]
-        public static T SafeMax<T>(this IEnumerable<T> source, T @default = default) => source.Prepend(@default).Max();
-
-        [Pure]
-        public static float SafeMax<T1>(this IEnumerable<T1> source, Func<T1, float> selector, float @default = 0f) {
-            try {
-                return source.Max(selector);
-            }
-            catch (Exception) {
-                return @default;
-            }
-        }
-
-        #endregion
-
-        [Pure]
-        [StringFormatMethod("format")]
-        public static string Join<T>([NotNull] this IEnumerable<T> collection, string separator = ", ", string defaultValue = "\"null\"",
-            [NotNull] string format = "{0}") =>
-            string.Join(separator, collection.ToStrings(defaultValue, format));
 
         /// <returns>true if empty or all elements are null</returns>
         [Pure]
@@ -135,29 +40,6 @@ namespace DevelopmentEssentials.Extensions.CS {
             collection.Where(e => !EqualityComparer<T>.Default.Equals(e, element));
 
         public static IEnumerable<T> OrderByName<T>(this IEnumerable<T> collection) where T : Object => collection.OrderBy(o => o.name);
-
-        #region Replace
-
-        [Pure]
-        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, T> replacement) => collection.Select(replacement);
-
-        [Pure]
-        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, bool condition, Func<T, T> replacement) =>
-            collection.Select(e => condition ? replacement(e) : e);
-
-        [Pure]
-        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, bool> condition, Func<T, T> replacement) =>
-            collection.Select(e => condition(e) ? replacement(e) : e);
-
-        [Pure]
-        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, bool condition, T replacement) =>
-            collection.Select(e => condition ? replacement : e);
-
-        [Pure]
-        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, bool> condition, T replacement) =>
-            collection.Select(e => condition(e) ? replacement : e);
-
-        #endregion
 
         /// <returns>The collection with merged duplicate elements</returns>
         [Pure]
@@ -191,73 +73,35 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs) =>
             pairs.ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        #region IDictionary
-
-        /// Filters out the null <see cref="UnityEngine.Object"/>s
-        [Pure]
-        public static Dictionary<TKey, TValue> ExistingKeys<TKey, TValue>(this IDictionary<TKey, TValue> collection) where TKey : Object =>
-            collection.Where(x => x.Key).ToDictionary();
-
-        /// Filters out the null <see cref="UnityEngine.Object"/>s
-        [Pure]
-        public static IDictionary<TKey, TValue> ExistingValues<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TValue : Object => dictionary.Where(x => x.Value).ToDictionary();
-
-        public static IDictionary<TKey, TValue> RemoveAll<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> predicate) {
-            foreach ((TKey key, TValue value) in dictionary)
-                if (predicate(key, value))
-                    dictionary.Remove(key);
-
-            return dictionary;
-        }
-
-        [Pure]
-        public static IDictionary<TKey, TValue> Except<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) =>
-            dictionary.Where(e => !EqualityComparer<TKey>.Default.Equals(e.Key, key)).ToDictionary();
-
-        [Pure]
-        public static IDictionary<TKey, TValue> OrderByKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) =>
-            dictionary.OrderBy(kvp => kvp.Key).ToDictionary();
-
-        [Pure]
-        public static IDictionary<TKey, TValue> OrderByKeyDescending<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) =>
-            dictionary.OrderByDescending(kvp => kvp.Key).ToDictionary();
-
-        #endregion
-
         [Pure]
         public static IEnumerable<T> Enumerate<T>(this int count, Func<int, T> func) => Enumerable.Range(0, count).Select(func);
 
-        #region Tuples
-
-        [Pure]
-        public static (T, T) Tuple2<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1));
-        }
-
-        [Pure]
-        public static (T, T, T) Tuple3<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
-                source.ElementAtOrDefault(2));
-        }
-
-        [Pure]
-        public static (T, T, T, T) Tuple4<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
-                source.ElementAtOrDefault(2), source.ElementAtOrDefault(3));
-        }
-
-        #endregion
-
+        /// <seealso cref="ClearUnityNulls"/>
         public static void ClearNulls<T>(this List<T> list) => list.RemoveAll(x => x.Equals(null));
 
+        /// <seealso cref="ClearNulls"/>
+        public static List<T> ClearUnityNulls<T>(this List<T> list) where T : Object {
+            list.RemoveAll(x => !x);
+            return list;
+        }
+
+        public static List<T> Distinctify<T>(this List<T> list) {
+            if (list.Count <= 1)
+                return list;
+
+            list.Sort();
+
+            for (int i = list.Count - 1; i > 0; i--)
+                if (list[i].Equals(list[i - 1]))
+                    list.RemoveAt(i);
+
+            return list;
+        }
+
         [Pure]
-        public static IEnumerable<string> ToStrings<T>(this IEnumerable<T> source, string nullValue = "\"null\"", [NotNull] string prefix = "", [NotNull] string suffix = "") =>
-            source?.Select(e => prefix + e.EnsureString(nullValue) + suffix);
+        [StringFormatMethod("format")]
+        public static IEnumerable<string> ToStrings<T>(this IEnumerable<T> source, string nullValue = "\"null\"", [NotNull] string format = "{0}") =>
+            source?.Select(e => string.Format(format, e.EnsureString(nullValue)));
 
         [Pure]
         public static T ElementAtOrDefault<T>(this IEnumerable<T> source, Index index, T @default = default) {
@@ -284,6 +128,16 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return @default;
             }
         }
+
+        [Pure]
+        [StringFormatMethod("format")]
+        public static string Join<T>([NotNull] this IEnumerable<T> collection, string separator = ", ", string defaultValue = "\"null\"", [NotNull] string format = "{0}") =>
+            string.Join(separator, collection.ToStrings(defaultValue, format));
+
+        [Pure]
+        [StringFormatMethod("format")]
+        public static string Join<T, TResult>([NotNull] this IEnumerable<T> collection, Func<T, TResult> selector, string separator = ", ", string defaultValue = "\"null\"", [NotNull] string format = "{0}") =>
+            collection.Select(selector).Join(separator, defaultValue, format);
 
         [Pure]
         public static string JoinSmart(this IEnumerable collection, string separator = "", string defaultValue = "\"null\"", string prefix = "", string suffix = "") {
@@ -349,6 +203,114 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, Index index, Func<T1, T2> getter, T2 @default = default) =>
             getter(collection.ElementAtOrDefault(index)) ?? @default;
 
+        #region Index
+
+        [Pure]
+        public static int IndexOf<T>(this IEnumerable<T> collection, T element, int @default = -1) {
+            int index = collection.ToList().IndexOf(element);
+            return index == -1 ? @default : index;
+        }
+
+        [Pure]
+        public static int IndexOfOr([NotNull] this string source, char search, int defaultIndex = 0) =>
+            source.Contains(search) ? source.IndexOf(search) : defaultIndex;
+
+        [Pure]
+        public static int IndexOfOr([NotNull] this string source, string search, int defaultIndex = 0) =>
+            source.Contains(search) ? source.IndexOf(search) : defaultIndex;
+
+        [Pure]
+        public static int LastIndexOfOr([NotNull] this string source, string search, int defaultIndex = 0) =>
+            source.Contains(search) ? source.LastIndexOf(search) : defaultIndex;
+
+        [Pure]
+        public static bool IsIndexWithin<T>(this IEnumerable<T> enumerable, int index) => index >= 0 && index < enumerable.Count();
+
+        #endregion
+
+        #region Random
+
+        public static int RandomIndex<T>(this IEnumerable<T> source) => new Random().Next(source.Count());
+
+        /// <param name="percentage">The percentage of times to return a random element instead of the default value</param>
+        /// <example>if percentage = 90<br/>returns a random element 90% of the time<br/>returns the default value 10% of the time</example>
+        public static T Random<T>(this IEnumerable<T> source, T @default = default, int percentage = 100) {
+            if (new Random().Next(100) >= percentage)
+                return @default;
+
+            IEnumerable<T> enumerable = source as T[] ?? source.ToArray();
+            return enumerable.ElementAtOrDefault(enumerable.RandomIndex(), @default);
+        }
+
+        #endregion
+
+        #region OrDefault
+
+        [Pure]
+        public static T ElementAtOrDefault<T>(this IEnumerable<T> source, int index, T @default) {
+            if (source == null) return @default;
+
+            T element = source.ElementAtOrDefault(index);
+
+            if (element == null || element.Equals(@default))
+                return @default;
+
+            return element;
+        }
+
+        [Pure]
+        public static T ElementAtOrDefaultValue<T>(this IEnumerable<T> collection, int index, T @default = default) =>
+            collection.ElementAtOrDefault(index) ?? @default;
+
+        [Pure]
+        public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, int index, Func<T1, T2> getter, T2 @default = default) =>
+            getter(collection.ElementAtOrDefault(index)) ?? @default;
+
+        #endregion
+
+        #region Safe
+
+        [Pure]
+        public static IEnumerable<T> Safe<T>(this IEnumerable<T> source) => source ?? Enumerable.Empty<T>();
+
+        [Pure]
+        public static T SafeMax<T>(this IEnumerable<T> source, T @default = default) => source.Prepend(@default).Max();
+
+        [Pure]
+        public static float SafeMax<T1>(this IEnumerable<T1> source, Func<T1, float> selector, float @default = 0f) {
+            try {
+                return source.Max(selector);
+            }
+            catch (Exception) {
+                return @default;
+            }
+        }
+
+        #endregion
+
+        #region Replace
+
+        [Pure]
+        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, T> replacement) => collection.Select(replacement);
+
+        [Pure]
+        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, bool condition, Func<T, T> replacement) =>
+            collection.Select(e => condition ? replacement(e) : e);
+
+        [Pure]
+        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, bool> condition, Func<T, T> replacement) =>
+            collection.Select(e => condition(e) ? replacement(e) : e);
+
+        [Pure]
+        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, bool condition, T replacement) =>
+            collection.Select(e => condition ? replacement : e);
+
+        [Pure]
+        public static IEnumerable<T> Replace<T>(this IEnumerable<T> collection, Func<T, bool> condition, T replacement) =>
+            collection.Select(e => condition(e) ? replacement : e);
+
+        #endregion
+
         #region IDictionary
 
         public static IDictionary<TKey, TValue> RemoveKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> predicate) =>
@@ -370,6 +332,35 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static TValue TryGetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue @default = default) =>
             dictionary.TryGetValue(key, out TValue value) ? value : @default;
+
+        /// Filters out the null <see cref="UnityEngine.Object"/>s
+        [Pure]
+        public static Dictionary<TKey, TValue> ExistingKeys<TKey, TValue>(this IDictionary<TKey, TValue> collection) where TKey : Object =>
+            collection.Where(x => x.Key).ToDictionary();
+
+        /// Filters out the null <see cref="UnityEngine.Object"/>s
+        [Pure]
+        public static IDictionary<TKey, TValue> ExistingValues<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TValue : Object => dictionary.Where(x => x.Value).ToDictionary();
+
+        public static IDictionary<TKey, TValue> RemoveAll<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> predicate) {
+            foreach ((TKey key, TValue value) in dictionary)
+                if (predicate(key, value))
+                    dictionary.Remove(key);
+
+            return dictionary;
+        }
+
+        [Pure]
+        public static IDictionary<TKey, TValue> Except<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key) =>
+            dictionary.Where(e => !EqualityComparer<TKey>.Default.Equals(e.Key, key)).ToDictionary();
+
+        [Pure]
+        public static IDictionary<TKey, TValue> OrderByKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) =>
+            dictionary.OrderBy(kvp => kvp.Key).ToDictionary();
+
+        [Pure]
+        public static IDictionary<TKey, TValue> OrderByKeyDescending<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) =>
+            dictionary.OrderByDescending(kvp => kvp.Key).ToDictionary();
 
         #endregion
 
@@ -396,6 +387,28 @@ namespace DevelopmentEssentials.Extensions.CS {
                 array[i] = (T) tuple[i];
 
             return array;
+        }
+
+        [Pure]
+        public static (T, T) Tuple2<T>(this IEnumerable<T> source) {
+            source = source.ToArray();
+            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1));
+        }
+
+        [Pure]
+        public static (T, T, T) Tuple3<T>(this IEnumerable<T> source) {
+            source = source.ToArray();
+
+            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
+                source.ElementAtOrDefault(2));
+        }
+
+        [Pure]
+        public static (T, T, T, T) Tuple4<T>(this IEnumerable<T> source) {
+            source = source.ToArray();
+
+            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
+                source.ElementAtOrDefault(2), source.ElementAtOrDefault(3));
         }
 
         #endregion

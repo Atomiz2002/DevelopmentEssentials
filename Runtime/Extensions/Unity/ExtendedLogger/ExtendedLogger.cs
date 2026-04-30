@@ -354,7 +354,7 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
         }
 #else
             // AppendFilteredStackTrace(ref message, stackFrames);
-            ReplacePathsWithLinks(ref message);
+            // ReplacePathsWithLinks(ref message);
 
             Object ctx = context switch {
                 Component c   => c.gameObject,
@@ -386,24 +386,6 @@ namespace DevelopmentEssentials.Extensions.Unity.ExtendedLogger {
         #endregion
 
         #region Extra
-
-        public static void ReplacePathsWithLinks(ref string message) {
-            if (string.IsNullOrEmpty(message))
-                return;
-
-            foreach (Match m in Regex.Matches(message, @" in (file:line:column )?(\w.*?):(\d+)(:\d+)?")) {
-                try {
-                    string fullMatch = m.Value;
-                    string path      = m.Groups[2].Value.Trim();
-                    string name      = Path.GetFileName(path); // can throw for invalid chars
-                    string line      = m.Groups[3].Value;
-                    string link      = name.Link(path, line);
-                    string replaced  = fullMatch.Replace(name, link);
-                    message = message.Replace(fullMatch, replaced);
-                }
-                catch {}
-            }
-        }
 
         public static void AppendFilteredStackTrace(ref string message, StackFrame[] stackFrames) { // todo untested
             // message.Log("AAAAAAAAAAAAAA");

@@ -26,7 +26,7 @@ namespace DevelopmentEssentials.Editor.DependencyManagement {
             AssetDatabase.Refresh();
         }
 
-        [MenuItem("Tools/Atomiz/Distinct Soft Dependencies Version Defines")]
+        [MenuItem("Tools/Atomiz/Distinctify Soft Dependencies Version Defines")]
         private static void Distinct() {
             string[] asmdefs = {
                 "DevelopmentEssentials",
