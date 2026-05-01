@@ -372,6 +372,14 @@ namespace DevelopmentEssentials.Extensions.CS {
 
         #region Tuples
 
+        public static void ForEach(this ITuple tuple, Action<object> action) {
+            if (tuple == null)
+                return;
+
+            for (int i = 0; i < tuple.Length; i++)
+                action.SafeInvoke(tuple[i]);
+        }
+
         [Pure]
         public static object[] ToArray(this ITuple tuple) {
             if (tuple == null)
