@@ -203,6 +203,31 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, Index index, Func<T1, T2> getter, T2 @default = default) =>
             getter(collection.ElementAtOrDefault(index)) ?? @default;
 
+        public static void ForEach(this object obj, Action<object> action) {
+            if (obj is IEnumerable enumerable and not string) {
+                foreach (object k in enumerable)
+                    action.SafeInvoke(k);
+            }
+            else if (obj is ITuple tuple) {
+                tuple.ForEach(action.SafeInvoke);
+            }
+            else
+                action.SafeInvoke(obj);
+        }
+
+        public static IEnumerable Enumerate(this object obj) {
+            if (obj is IEnumerable enumerable and not string) {
+                foreach (object k in enumerable)
+                    yield return k;
+            }
+            else if (obj is ITuple tuple) {
+                foreach (object item in tuple.Enumerate())
+                    yield return item;
+            }
+            else
+                yield return obj;
+        }
+
         #region Index
 
         [Pure]
@@ -371,6 +396,14 @@ namespace DevelopmentEssentials.Extensions.CS {
         #endregion
 
         #region Tuples
+
+        public static IEnumerable Enumerate(this ITuple tuple) {
+            if (tuple == null)
+                yield break;
+
+            for (int i = 0; i < tuple.Length; i++)
+                yield return tuple[i];
+        }
 
         public static void ForEach(this ITuple tuple, Action<object> action) {
             if (tuple == null)
