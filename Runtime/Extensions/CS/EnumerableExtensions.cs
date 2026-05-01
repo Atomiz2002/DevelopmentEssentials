@@ -333,6 +333,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static TValue TryGetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue @default = default) =>
             dictionary.TryGetValue(key, out TValue value) ? value : @default;
 
+        [Pure]
+        public static Dictionary<TKey, TValue> NonNullKeys<TKey, TValue>(this IDictionary<TKey, TValue> collection) => collection.Where(x => x.Key != null).ToDictionary();
+
+        [Pure]
+        public static IDictionary<TKey, TValue> NonNullValues<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) => dictionary.Where(x => x.Value != null).ToDictionary();
+
         /// Filters out the null <see cref="UnityEngine.Object"/>s
         [Pure]
         public static Dictionary<TKey, TValue> ExistingKeys<TKey, TValue>(this IDictionary<TKey, TValue> collection) where TKey : Object =>
