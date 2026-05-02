@@ -1,10 +1,12 @@
 using System.IO;
 using System.Linq;
-using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
 using ComponentNames;
+#endif
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
+using Sirenix.OdinInspector;
 #endif
 
 namespace DevelopmentEssentials.Extensions.Unity {
@@ -186,7 +188,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         public static T Select<T>(this T t) where T : Object {
 #if UNITY_EDITOR
-            if (t.As(out MonoBehaviour mono))
+            if (t.Is(out MonoBehaviour mono))
                 Selection.activeObject = mono.gameObject;
             else
                 Selection.activeObject = t;
@@ -196,7 +198,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         public static T Ping<T>(this T t) where T : Object {
 #if UNITY_EDITOR
-            if (t.As(out MonoBehaviour mono))
+            if (t.Is(out MonoBehaviour mono))
                 EditorGUIUtility.PingObject(mono.gameObject);
             else
                 EditorGUIUtility.PingObject(t);
@@ -213,8 +215,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original) where T : Object {
             T instance = Object.Instantiate(original);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -222,8 +224,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, Transform parent) where T : Object {
             T instance = Object.Instantiate(original, parent, false);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -231,8 +233,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, Transform parent, bool worldPositionStays) where T : Object {
             T instance = Object.Instantiate(original, parent, worldPositionStays);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -240,8 +242,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation = default) where T : Object {
             T instance = Object.Instantiate(original, position, rotation);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -249,8 +251,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation, Transform parent) where T : Object {
             T instance = Object.Instantiate(original, position, rotation, parent);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -258,12 +260,12 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T InstantiateLocal<T>(this T original, Transform parent, Vector3 localPosition, Quaternion localRotation) where T : Object {
             T instance = Object.Instantiate(original, localPosition, localRotation, parent);
 
-            if (instance is GameObject go) {
+            if (instance.Is(out GameObject go)) {
                 go.transform.localPosition = localPosition;
                 go.transform.localRotation = localRotation;
 #if UNITY_EDITOR && !SIMULATE_BUILD
-                if (original is GameObject o)
-                    go.TryAddComponent<PrefabSource>().SourcePrefab = o;
+                if (original.Is(out GameObject o))
+                    go.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             }
 
@@ -273,8 +275,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, InstantiateParameters parameters) where T : Object {
             T instance = Object.Instantiate(original, parameters);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
@@ -282,15 +284,13 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static T Instantiate<T>(this T original, Vector3 position, Quaternion rotation, InstantiateParameters parameters) where T : Object {
             T instance = Object.Instantiate(original, position, rotation, parameters);
 #if UNITY_EDITOR && !SIMULATE_BUILD
-            if (instance is GameObject i && original is GameObject o)
-                i.TryAddComponent<PrefabSource>().SourcePrefab = o;
+            if (instance.Is(out GameObject i) && original.Is(out GameObject o))
+                i.TryAddComponent<PrefabSource>().Initialize(o);
 #endif
             return instance;
         }
 
         // Additional
-
-        public static GameObject Instantiate(this GameObject prefab) => Object.Instantiate(prefab);
 
         public static T Instantiate<T>(this GameObject prefab) where T : Component => prefab.Instantiate().GetComponent<T>();
 
@@ -320,9 +320,20 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
 
+        [HideMonoScript]
         public class PrefabSource : MonoBehaviour {
 
-            [ReadOnly] public GameObject SourcePrefab;
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
+            [ReadOnly]
+            [GUIColor("cyan")]
+#endif
+            public GameObject SourcePrefab;
+            // [ReadOnly] [GUIColor("cyan")] public MonoScript SourceScript; // lazy to implement
+
+            public void Initialize(GameObject sourcePrefab /*, MonoScript sourceScript = null*/) {
+                SourcePrefab = sourcePrefab;
+                // SourceScript = sourceScript;
+            }
 
         }
 
@@ -332,7 +343,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             Object destroy = obj;
 
-            if (destroyGO && obj is Component component)
+            if (destroyGO && obj.Is(out Component component))
                 destroy = component.gameObject;
 
             if (delayCall)

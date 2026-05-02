@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using DevelopmentEssentials.Extensions.CS;
+using DevelopmentEssentials.Extensions.Unity;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
@@ -139,8 +140,16 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
         #endregion
 
-        public static void Destroy(this Object obj, bool delayed = false) {
-            if (delayed)
+        public static void DestroySmart(this Object obj, bool allowDestroyingAssets = false, bool delayCall = false, bool destroyGO = true) {
+            if (!obj)
+                return;
+
+            Object destroy = obj;
+
+            if (destroyGO && obj.Is(out Component component))
+                destroy = component.gameObject;
+
+            if (delayCall)
                 EditorApplication.delayCall += Destroy;
             else
                 Destroy();
@@ -149,13 +158,13 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
             void Destroy() {
                 if (Application.isPlaying)
-                    Object.Destroy(obj);
+                    Object.Destroy(destroy);
                 else
-                    Object.DestroyImmediate(obj);
+                    Object.DestroyImmediate(destroy, allowDestroyingAssets);
             }
         }
 #else
-        public static void Destroy(this Object self) => Object.Destroy(self);
+    public static void DestroySmart(this Object self, bool _ = false, bool __ = false, bool ___ = true) => Object.Destroy(self);
 #endif
 
         [Pure]

@@ -6,10 +6,10 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
     public static class UnityNull {
 
-        /// Safe replacement for <c>unityObj is X x &amp;&amp; x...</c>
-        public static T As<T>(this Object unityObj, out T t) where T : class => t = (unityObj as T).n();
+        /// Safe replacement for <c>unityObj is/as X</c>
+        public static bool Is<T>(this Object unityObj, out T t) where T : Object => t = (unityObj as T).n();
 
-        /// Safe replacement for <c>unityObj is X</c>
+        /// <inheritdoc cref="Is{T}(Object,out T)"/>
         public static bool Is<T>(this Object unityObj) where T : Object => (unityObj as T).n();
 
         /// Safe <b>conditional access</b>.<br/>Safe <c>unityObj?.</c> call
