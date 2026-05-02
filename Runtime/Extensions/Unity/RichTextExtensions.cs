@@ -69,24 +69,6 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #endif
         }
 
-        [Pure]
-        public static string Decolored(this string source) {
-#if UNITY_EDITOR
-            return Regex.Replace(Regex.Replace(source, "<color=.*?>", string.Empty), "</color>", string.Empty);
-#else
-            return source;
-#endif
-        }
-
-        [Pure]
-        public static string Unformatted(this string source) {
-#if UNITY_EDITOR
-            return Regex.Replace(source, "<.*?>", string.Empty);
-#else
-        return source;
-#endif
-        }
-
         /// Formats the <paramref name="source"/> by replacing all locally accessible paths with hyperlinks
         [Pure]
         public static string LinkPaths(this string source) {
@@ -118,10 +100,26 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static  string Size(this string source, int size)                                        => source;
         public static  string Bold(this string source, bool condition = true)                           => source;
         private static string Tag(this string source, string tag, string setting = null)                => source;
-        public static  string Decolored(this string source)                                             => source;
-        public static  string Unformatted(this string source)                                           => source;
         public static  string LinkPaths(this string source)                                             => source;
 #endif
+
+        [Pure]
+        public static string Decolored(this string source) {
+#if UNITY_EDITOR
+            return Regex.Replace(Regex.Replace(source, "<color=.*?>", string.Empty), "</color>", string.Empty);
+#else
+            return source;
+#endif
+        }
+
+        [Pure]
+        public static string Unformatted(this string source) {
+#if UNITY_EDITOR
+            return Regex.Replace(source, "<.*?>", string.Empty);
+#else
+        return source;
+#endif
+        }
 
     }
 
