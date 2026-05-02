@@ -5,6 +5,7 @@ using UnityEngine;
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
 using ComponentNames;
 #endif
+
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
 using Sirenix.OdinInspector;
 #endif
@@ -45,7 +46,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
                     if (name == null || component.GetName() == name)
 #endif
-                        return true;
+                    return true;
             }
 
             return false;
@@ -320,7 +321,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
 
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
         [HideMonoScript]
+#endif
         public class PrefabSource : MonoBehaviour {
 
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
