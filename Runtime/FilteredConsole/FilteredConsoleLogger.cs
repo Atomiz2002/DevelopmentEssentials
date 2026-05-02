@@ -13,7 +13,7 @@ using System.Diagnostics;
 #endif
 
 #if UNITY_EDITOR
-namespace DevelopmentEssentials {
+namespace DevelopmentEssentials.FilteredConsole {
 
     [InitializeOnLoad]
 #endif
