@@ -21,8 +21,7 @@ namespace DevelopmentEssentials.Editor {
 
             AsmdefsDependencies.Add(new AsmdefDependencies("DevelopmentEssentials.Editor.asmdef", "DEVELOPMENT_ESSENTIALS_EDITOR_")
                 .SetHardDependencies(
-                    new("DependencyManager"),
-                    new AsmdefDependencies.HardAsmdefDependency("DevelopmentEssentials"))
+                    new("DevelopmentEssentials"))
                 .SetSoftDependencies(
                     new("COMPONENT_NAMES",
                         "ComponentNames.Editor"),
