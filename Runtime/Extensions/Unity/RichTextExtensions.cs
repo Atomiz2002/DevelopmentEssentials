@@ -41,7 +41,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         [Pure]
-        public static string Link([NotNull] this string source, string path = null, string line = "0") =>
+        public static string Link([NotNull] this string source, string path, string line) =>
             source.Link(path, int.TryParse(line, out int ln) ? ln : 0);
 
         [Pure]

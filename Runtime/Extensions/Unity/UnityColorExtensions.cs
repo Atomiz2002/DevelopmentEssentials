@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Sirenix.Utilities;
 using UnityEngine;
 
 namespace DevelopmentEssentials.Extensions.Unity {
@@ -42,10 +43,10 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return texture;
         }
 
-#if UNITY_EDITOR && !SIMULATE_BUILD
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR && UNITY_EDITOR && !SIMULATE_BUILD
+        /// Sirenix.Utilities.ColorExtensions is stripped from build for some reason
         [Pure]
-        // public static Color AlterEditorOnlyForNow(this Color color, float amount = .1f) => color + (Sirenix.Utilities.ColorExtensions.PerceivedLuminosity(color) < .5f ? new Color(amount, amount, amount, amount) : new(-amount, -amount, -amount, -amount));
-        public static Color AlterEditorOnlyForNow(this Color color, float amount = .1f) => color;
+        public static Color AlterEditorOnlyForNow(this Color color, float amount = .1f) => color + (color.PerceivedLuminosity() < .5f ? new Color(amount, amount, amount, amount) : new(-amount, -amount, -amount, -amount));
 #endif
 
     }

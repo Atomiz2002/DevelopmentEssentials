@@ -12,7 +12,8 @@ namespace DevelopmentEssentials.Editor {
                 new("NEWTONSOFT_JSON",
                     "Newtonsoft.Json.dll"),
                 new("ODIN_INSPECTOR",
-                    "Sirenix.OdinInspector.Attributes.dll"),
+                    "Sirenix.OdinInspector.Attributes.dll",
+                    "Sirenix.Utilities.dll"),
                 new("COMPONENT_NAMES",
                     "ComponentNames"));
 
