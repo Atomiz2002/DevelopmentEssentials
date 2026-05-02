@@ -7,10 +7,14 @@ namespace DevelopmentEssentials.Extensions.CS {
 
     public static class CopyPasteExtensions {
 
-        public static void CopyObjToClipboard<T>(this T t) =>
+        public static void CopyObjToClipboard<T>(this T t) {
             EditorGUIUtility.systemCopyBuffer = t is Object obj
                 ? JsonUtility.ToJson(obj, true)
                 : JsonConvert.SerializeObject(t, Formatting.Indented);
+
+            if (t is ICopyable copyable)
+                copyable.OnCopy(EditorGUIUtility.systemCopyBuffer);
+        }
 
         public static void PasteObjFromClipboard<T>(this T t) {
             if (t is Object obj)
