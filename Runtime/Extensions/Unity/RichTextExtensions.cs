@@ -8,6 +8,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
     public static class RichTextExtensions {
 
+#if UNITY_EDITOR
         /// <returns>&lt;color=<see cref="ToHex"/>&gt;str&lt;/color&gt;</returns>
         [Pure]
         public static string Colored(this string source, Color color, bool condition = true) => condition ? source.Tag("color", $"={color.ToHex()}") : source;
@@ -107,6 +108,20 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             return source;
         }
+#else
+        public static  string Colored(this string source, Color color)                                  => source;
+        public static  string Colored(this string source, System.Drawing.Color color)                   => source;
+        public static  string Recolored(this string source, Color color)                                => source;
+        public static  string Recolored(this string source, System.Drawing.Color color)                 => source;
+        public static  string Link([NotNull] this string source, string path = null, string line = "0") => source;
+        public static  string Link([NotNull] this string source, string path, int line)                 => source;
+        public static  string Size(this string source, int size)                                        => source;
+        public static  string Bold(this string source, bool condition = true)                           => source;
+        private static string Tag(this string source, string tag, string setting = null)                => source;
+        public static  string Decolored(this string source)                                             => source;
+        public static  string Unformatted(this string source)                                           => source;
+        public static  string LinkPaths(this string source)                                             => source;
+#endif
 
     }
 
