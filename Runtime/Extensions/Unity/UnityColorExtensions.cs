@@ -1,6 +1,8 @@
 ﻿using JetBrains.Annotations;
-using Sirenix.Utilities;
 using UnityEngine;
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
+using Sirenix.Utilities;
+#endif
 
 namespace DevelopmentEssentials.Extensions.Unity {
 
