@@ -7,6 +7,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
     public static class UnityNull {
 
         /// Safe replacement for <c>unityObj is/as X</c>
+        public static T As<T>(this Object unityObj, out T t) where T : Object => t = (unityObj as T).n();
+
+        /// Safe replacement for <c>unityObj is/as X</c>
         public static bool Is<T>(this Object unityObj, out T t) where T : Object => t = (unityObj as T).n();
 
         /// <inheritdoc cref="Is{T}(Object,out T)"/>
