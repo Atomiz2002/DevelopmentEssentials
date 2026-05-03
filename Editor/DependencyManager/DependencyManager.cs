@@ -21,11 +21,12 @@ namespace DevelopmentEssentials.Editor {
 
             AsmdefsDependencies.Add(new AsmdefDependencies("DevelopmentEssentials.Editor.asmdef", "DEVELOPMENT_ESSENTIALS_EDITOR_")
                 .SetHardDependencies(
-                    new("DevelopmentEssentials"))
+                    new("DEVELOPMENT_ESSENTIALS",
+                        "DevelopmentEssentials"))
                 .SetSoftDependencies(
                     new("COMPONENT_NAMES",
                         "ComponentNames.Editor"),
-                    new AsmdefDependencies.SoftAsmdefDependency("ODIN_INSPECTOR",
+                    new AsmdefDependencies.AsmdefDependency("ODIN_INSPECTOR",
                         "Sirenix.OdinInspector.Editor.dll",
                         "Sirenix.OdinInspector.Attributes.dll",
                         "Sirenix.Serialization.dll",
