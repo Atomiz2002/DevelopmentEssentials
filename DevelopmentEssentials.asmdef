@@ -5,38 +5,10 @@
     "noEngineReferences": false,
     "overrideReferences": true,
     "rootNamespace": "DevelopmentEssentials",
-    "references": [
-        "ComponentNames",
-        "UniTask"
-    ],
-    "precompiledReferences": [
-        "Newtonsoft.Json.dll",
-        "Sirenix.Utilities.dll",
-        "Sirenix.OdinInspector.Attributes.dll"
-    ],
+    "references": [],
+    "precompiledReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_NEWTONSOFT_JSON"
-        },
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR"
-        },
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES"
-        },
-        {
-            "name": "Unity",
-            "expression": "",
-            "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_UNI_TASK"
-        }
-    ]
+    "versionDefines": []
 }
