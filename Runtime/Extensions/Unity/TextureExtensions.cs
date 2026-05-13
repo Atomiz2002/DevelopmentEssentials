@@ -129,7 +129,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         [Pure]
         public static Texture2D Read(this Texture texture, Rect rect = default) {
-            if (!texture) return null;
+            if (!texture)
+                return null;
 
             if (rect == default)
                 rect = new(0, 0, texture.width, texture.height);
@@ -151,6 +152,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(renderTexture);
+
             return result;
         }
 

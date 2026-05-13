@@ -51,19 +51,19 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
         [Pure]
         [CanBeNull]
-        public static T LoadAssetByGUID<T>(this string guid) where T : Object => AssetDatabase.LoadAssetAtPath<T>(guid.GUIDToPath());
+        public static T LoadAssetByGUID<T>(this string guid) where T : Object => AssetDatabase.LoadAssetByGUID<T>(new(guid));
 
         [Pure]
         [CanBeNull]
-        public static T LoadAssetByGUID<T>(this GUID guid) where T : Object => AssetDatabase.LoadAssetAtPath<T>(guid.GUIDToPath());
+        public static T LoadAssetByGUID<T>(this GUID guid) where T : Object => AssetDatabase.LoadAssetByGUID<T>(guid);
 
         [Pure]
         [CanBeNull]
-        public static Object LoadAssetByGUID(this string guid) => AssetDatabase.LoadMainAssetAtPath(guid.GUIDToPath());
+        public static Object LoadAssetByGUID(this string guid) => AssetDatabase.LoadAssetByGUID<Object>(new(guid));
 
         [Pure]
         [CanBeNull]
-        public static Object LoadAssetByGUID(this GUID guid) => AssetDatabase.LoadMainAssetAtPath(guid.GUIDToPath());
+        public static Object LoadAssetByGUID(this GUID guid) => AssetDatabase.LoadAssetByGUID<Object>(guid);
 
         [Pure]
         [CanBeNull]
@@ -164,7 +164,7 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
             }
         }
 #else
-    public static void DestroySmart(this Object self, bool _ = false, bool __ = false, bool ___ = true) => Object.Destroy(self);
+        public static void DestroySmart(this Object self, bool _ = false, bool __ = false, bool ___ = true) => Object.Destroy(self);
 #endif
 
         [Pure]
