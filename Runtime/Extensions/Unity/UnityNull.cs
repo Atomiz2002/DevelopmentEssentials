@@ -16,7 +16,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static bool Is<T>(this Object unityObj) where T : Object => (unityObj as T).n();
 
         /// Safe <b>conditional access</b>.<br/>Safe <c>unityObj?.</c> call
-        public static TResult n<TValue, TResult>(this TValue unityObj, Func<TValue, TResult> func) where TValue : Object => unityObj ? func.SafeInvoke(unityObj) : default;
+        public static TResult n<TValue, TResult>(this TValue unityObj, Func<TValue, TResult> func) where TValue : Object => unityObj ? func.InvokeSafe(unityObj) : default;
 
         // /// Safe <b>null coalesce</b>.<br/><c>unityObj?.</c> and <c>unityObj ??</c> is unsafe.<br/><c>unityObj.Nc()?.</c> and <c>unityObj.Nc() ??</c> is safe.
         // public static T n<T>(this T unityObj) where T : Object => unityObj ? unityObj : null;

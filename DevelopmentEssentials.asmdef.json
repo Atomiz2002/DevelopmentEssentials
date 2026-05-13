@@ -1,0 +1,30 @@
+﻿{
+  "hardAsmdefDependencies": [],
+  "softAsmdefDependencies": [
+    {
+      "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_UNI_TASK",
+      "dependencies": [
+        "UniTask"
+      ]
+    },
+    {
+      "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_NEWTONSOFT_JSON",
+      "dependencies": [
+        "Newtonsoft.Json.dll"
+      ]
+    },
+    {
+      "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR",
+      "dependencies": [
+        "Sirenix.OdinInspector.Attributes.dll",
+        "Sirenix.Utilities.dll"
+      ]
+    },
+    {
+      "define": "DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES",
+      "dependencies": [
+        "ComponentNames"
+      ]
+    }
+  ]
+}

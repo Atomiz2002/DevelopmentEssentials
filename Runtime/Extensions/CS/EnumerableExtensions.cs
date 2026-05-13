@@ -140,6 +140,10 @@ namespace DevelopmentEssentials.Extensions.CS {
             collection.Select(selector).Join(separator, defaultValue, format);
 
         [Pure]
+        public static string Listed(this IEnumerable collection, string separator = ", ", string defaultValue = "\"null\"", string prefix = "", string suffix = "") =>
+            collection.JoinSmart(separator, defaultValue, prefix, suffix);
+
+        [Pure]
         public static string JoinSmart(this IEnumerable collection, string separator = "", string defaultValue = "\"null\"", string prefix = "", string suffix = "") {
             IList<string> list = collection.ToStringList(defaultValue);
 

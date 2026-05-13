@@ -43,7 +43,7 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static string Prepend(this string source, string prefix) => prefix + source;
 
         [Pure]
-        public static string PrependIf(this string source, string defaultValue, Func<string, bool> condition) => source.PrependIf(defaultValue, condition.SafeInvoke(source));
+        public static string PrependIf(this string source, string defaultValue, Func<string, bool> condition) => source.PrependIf(defaultValue, condition.InvokeSafe(source));
 
         [Pure]
         public static string PrependIf(this string source, string defaultValue, bool condition) => condition ? defaultValue + source : source;
