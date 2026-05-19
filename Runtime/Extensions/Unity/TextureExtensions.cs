@@ -122,14 +122,20 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return trimmedTexture;
         }
 
-        public static void Trim(this Texture texture, bool uniform = false, Color color = default) {
+        public static void Trim([CanBeNull] this Texture texture, bool uniform = false, Color color = default) {
+            if (!texture)
+                return;
+
             if (texture.Is(out Texture2D t))
                 t.Trim(uniform);
             else
                 texture.Read().Trim(uniform, color);
         }
 
-        public static void Trim(this Texture2D texture, bool uniform = false, Color color = default) {
+        public static void Trim([CanBeNull] this Texture2D texture, bool uniform = false, Color color = default) {
+            if (!texture)
+                return;
+
             Texture2D newTexture = texture.Trimmed(uniform, color);
             texture.Reinitialize(newTexture.width, newTexture.height);
             texture.SetPixels(newTexture.GetPixels());
@@ -146,14 +152,20 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         /// Supposedly better for runtime and useless in editor
         [Pure]
-        public static Texture2D ReadGPU(this RenderTexture texture) {
+        public static Texture2D ReadGPU([CanBeNull] this RenderTexture texture) {
+            if (!texture)
+                return null;
+
             Texture2D t = new(texture.width, texture.height, TextureFormat.ARGB32, false);
             Graphics.CopyTexture(texture, t);
             return t;
         }
 
         [Pure]
-        public static Texture2D Read(this RenderTexture texture) {
+        public static Texture2D Read([CanBeNull] this RenderTexture texture) {
+            if (!texture)
+                return null;
+
             Texture2D tex = new(texture.width, texture.height, TextureFormat.ARGB32, false);
             RenderTexture.active = texture;
 
@@ -185,7 +197,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         [Pure]
-        public static Texture2D Read(this Texture texture, Rect rect = default) {
+        public static Texture2D Read([CanBeNull] this Texture texture, Rect rect = default) {
             if (!texture)
                 return null;
 
@@ -213,8 +225,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return result;
         }
 
-        public static Texture2D Underlay(this Texture2D texture, Color bg) {
-            if (!texture) return null;
+        public static Texture2D Underlay([CanBeNull] this Texture2D texture, Color bg) {
+            if (!texture)
+                return null;
 
             RenderTexture rt = RenderTexture.GetTemporary(texture.width, texture.height);
             RenderTexture.active = rt;
@@ -232,12 +245,17 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         [Pure]
-        public static Sprite ToSprite(this Texture2D texture) =>
-            Sprite.Create(texture, new(0, 0, texture.width, texture.height), new(.5f, .5f));
+        public static Sprite ToSprite([CanBeNull] this Texture2D texture) {
+            if (!texture)
+                return null;
+
+            return Sprite.Create(texture, new(0, 0, texture.width, texture.height), new(.5f, .5f));
+        }
 
         [Pure]
-        public static Texture2D ToTexture2D(this Sprite sprite) {
-            if (!sprite || !sprite.texture) return null;
+        public static Texture2D ToTexture2D([CanBeNull] this Sprite sprite) {
+            if (!sprite || !sprite.texture)
+                return null;
 
             return sprite.texture.Read(sprite.rect);
         }
