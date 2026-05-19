@@ -7,12 +7,62 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
     public static class TextureExtensions {
 
+        public static void CaptureSnapshot(this Camera camera, out Texture2D texture, int width = 0, int height = 0, bool trim = false, bool pointFilter = false) =>
+            texture = camera.CaptureSnapshot(width, height, trim, pointFilter);
+
+        public static Texture2D CaptureSnapshot(this Camera camera, int width = 0, int height = 0, bool trim = false, bool pointFilter = false) {
+#if DEVELOPMENT_TOOLS_EDITOR_UNITY_URP
+            float renderScale = UniversalRenderPipeline.asset.renderScale;
+            UniversalRenderPipeline.asset.renderScale = 1;
+#endif
+            bool cameraInitiallyEnabled = camera.isActiveAndEnabled;
+
+            camera.SetActive(true);
+
+            if (width == 0) width   = Screen.width;
+            if (height == 0) height = (int) ((float) Screen.height / Screen.width * width);
+
+            RenderTexture renderTexture = RenderTexture.GetTemporary(width, height, 24, RenderTextureFormat.ARGB32);
+            Texture2D     snapshot      = new(width, height, TextureFormat.ARGB32, false);
+
+            if (pointFilter)
+                snapshot.filterMode = FilterMode.Point;
+
+            camera.targetTexture          = renderTexture;
+            camera.forceIntoRenderTexture = true;
+
+            camera.Render();
+
+            RenderTexture.active = renderTexture;
+
+            snapshot.ReadPixels(new(0, 0, width, height), 0, 0); // Reads from RenderTexture.active
+            snapshot.Apply();
+
+            if (trim)
+                snapshot.Trim();
+
+            RenderTexture.active          = null;
+            camera.targetTexture          = null;
+            camera.forceIntoRenderTexture = false;
+            RenderTexture.ReleaseTemporary(renderTexture);
+
+            camera.SetActive(cameraInitiallyEnabled);
+
+#if DEVELOPMENT_TOOLS_EDITOR_UNITY_URP
+            UniversalRenderPipeline.asset.renderScale = renderScale;
+#endif
+            return snapshot;
+        }
+
         /// Trims the pixels of the specified color (default = transparent) from a Texture, returning a new Texture2D.
         public static Texture2D Trimmed(this Texture texture, bool uniform = false, Color color = default) =>
             !texture ? null : texture.Read().Trimmed(uniform, color);
 
         public static Texture2D Trimmed(this Texture2D texture, bool uniform = false, Color color = default) {
             if (!texture)
+                return null;
+
+            if (!texture.isReadable)
                 return null;
 
             Color[] pixels = texture.GetPixels();
@@ -72,19 +122,24 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return trimmedTexture;
         }
 
-        public static void Trim(this Texture texture, bool uniform = false) {
-            if (texture is Texture2D t)
+        public static void Trim(this Texture texture, bool uniform = false, Color color = default) {
+            if (texture.Is(out Texture2D t))
                 t.Trim(uniform);
             else
-                texture.Read().Trim(uniform);
+                texture.Read().Trim(uniform, color);
         }
 
-        public static void Trim(this Texture2D texture, bool uniform = false) {
-            Texture2D newTexture = texture.Trimmed(uniform);
+        public static void Trim(this Texture2D texture, bool uniform = false, Color color = default) {
+            Texture2D newTexture = texture.Trimmed(uniform, color);
             texture.Reinitialize(newTexture.width, newTexture.height);
             texture.SetPixels(newTexture.GetPixels());
             texture.Apply();
             newTexture.DestroySmart();
+        }
+
+        public static T SetFilter<T>(this T texture, FilterMode mode) where T : Texture {
+            texture.filterMode = mode;
+            return texture;
         }
 
         /// Supposedly better for runtime and useless in editor
