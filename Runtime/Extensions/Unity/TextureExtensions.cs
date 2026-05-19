@@ -137,8 +137,10 @@ namespace DevelopmentEssentials.Extensions.Unity {
             newTexture.DestroySmart();
         }
 
-        public static T SetFilter<T>(this T texture, FilterMode mode) where T : Texture {
-            texture.filterMode = mode;
+        public static T SetFilter<T>([CanBeNull] this T texture, FilterMode mode) where T : Texture {
+            if (texture)
+                texture.filterMode = mode;
+
             return texture;
         }
 
