@@ -176,26 +176,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return tex;
         }
 
-        private static Material underlayMaterial;
-
-        private static Material UnderlayMaterial {
-            get {
-                if (underlayMaterial)
-                    return underlayMaterial;
-
-                Shader shader = Shader.Find("Sprites/Default");
-
-                if (!shader) {
-                    Debug.LogError("Required blending shader not found.");
-                    return null;
-                }
-
-                underlayMaterial = new(shader);
-
-                return underlayMaterial;
-            }
-        }
-
+        // TODO Func<Color, Color> pixelColorModifier = null (replace/remove select pixels)
         [Pure]
         public static Texture2D Read([CanBeNull] this Texture texture, Rect rect = default) {
             if (!texture)
@@ -223,6 +204,26 @@ namespace DevelopmentEssentials.Extensions.Unity {
             RenderTexture.ReleaseTemporary(renderTexture);
 
             return result;
+        }
+
+        private static Material underlayMaterial;
+
+        private static Material UnderlayMaterial {
+            get {
+                if (underlayMaterial)
+                    return underlayMaterial;
+
+                Shader shader = Shader.Find("Sprites/Default");
+
+                if (!shader) {
+                    Debug.LogError("Required blending shader not found.");
+                    return null;
+                }
+
+                underlayMaterial = new(shader);
+
+                return underlayMaterial;
+            }
         }
 
         public static Texture2D Underlay([CanBeNull] this Texture2D texture, Color bg) {

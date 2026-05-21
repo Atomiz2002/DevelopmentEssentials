@@ -15,6 +15,12 @@ namespace DevelopmentEssentials.Extensions.Unity {
         /// <inheritdoc cref="Is{T}(Object,out T)"/>
         public static bool Is<T>(this Object unityObj) where T : Object => (unityObj as T).n();
 
+        /// Safe replacement for <c>unityObj is/as X</c>
+        public static bool IsNot<T>(this Object unityObj, out T t) where T : Object => !unityObj.Is(out t);
+
+        /// <inheritdoc cref="Is{T}(Object,out T)"/>
+        public static bool IsNot<T>(this Object unityObj) where T : Object => !unityObj.Is<T>();
+
         /// Safe <b>conditional access</b>.<br/>Safe <c>unityObj?.</c> call
         public static TResult n<TValue, TResult>(this TValue unityObj, Func<TValue, TResult> func) where TValue : Object => unityObj ? func.InvokeSafe(unityObj) : default;
 

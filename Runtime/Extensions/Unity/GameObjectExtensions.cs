@@ -46,7 +46,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
                     if (name == null || component.GetName() == name)
 #endif
-                    return true;
+                        return true;
             }
 
             return false;
