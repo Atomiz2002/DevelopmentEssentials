@@ -133,7 +133,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         public static void Trim([CanBeNull] this Texture2D texture, bool uniform = false, Color color = default) {
-            if (!texture)
+            if (!texture || !texture.isReadable)
                 return;
 
             Texture2D newTexture = texture.Trimmed(uniform, color);

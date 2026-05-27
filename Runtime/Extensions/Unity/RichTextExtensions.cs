@@ -7,7 +7,6 @@ using UnityEngine;
 namespace DevelopmentEssentials.Extensions.Unity {
 
     public static class RichTextExtensions {
-
 #if UNITY_EDITOR
         /// <returns>&lt;color=<see cref="ToHex"/>&gt;str&lt;/color&gt;</returns>
         [Pure]
@@ -71,11 +70,11 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         /// Formats the <paramref name="source"/> by replacing all locally accessible paths with hyperlinks
         [Pure]
-        public static string LinkPaths(this string source) {
-            if (string.IsNullOrEmpty(source))
+        public static string LinkPaths([CanBeNull] this string source) {
+            if (source.IsNullOrWhiteSpace())
                 return source;
 
-            foreach (Match m in Regex.Matches(source, @" in (file:line:column )?(\w.*?):(\d+)(:\d+)?")) {
+            foreach (Match m in Regex.Matches(source, @" in (file:line:column )?(?:\.(?:\\|\/))?((?:\w|\\|\/).*?):(\d+)(:\d+)?")) {
                 try {
                     string fullMatch = m.Value;
                     string path      = m.Groups[2].Value.Trim();
@@ -120,7 +119,6 @@ namespace DevelopmentEssentials.Extensions.Unity {
         return source;
 #endif
         }
-
     }
 
 }

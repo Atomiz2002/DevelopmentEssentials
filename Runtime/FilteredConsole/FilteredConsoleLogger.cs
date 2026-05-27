@@ -2,6 +2,7 @@
 using System.Linq;
 using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
+using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEditor;
 using UnityEngine;
 using Color = System.Drawing.Color;
@@ -18,7 +19,6 @@ namespace DevelopmentEssentials.FilteredConsole {
     [InitializeOnLoad]
 #endif
     public static class FilteredConsoleLogger {
-
         private static bool        usingOriginalLogger;
         private static ILogHandler originalLogHandler;
         private static ILogHandler filteredLogHandler;
@@ -102,7 +102,6 @@ namespace DevelopmentEssentials.FilteredConsole {
         }
 
         private class FilteredLogger : ILogHandler {
-
 #if UNITY_EDITOR && !SIMULATE_BUILD
             private EditorWindow consoleWindow;
 #endif
@@ -175,7 +174,7 @@ namespace DevelopmentEssentials.FilteredConsole {
                     case LogType.Error when blacklistError.Any(message.Contains):
                         return;
                     default:
-                        originalLogHandler.LogFormat(logType, context, format, args);
+                        originalLogHandler.LogFormat(logType, context, message, args);
                         break;
                 }
             }
@@ -195,9 +194,7 @@ namespace DevelopmentEssentials.FilteredConsole {
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                originalLogHandler.LogException(new _(exception.Message.Unformatted().LinkPaths(), exception), context);
-
-                // originalLogHandler.LogException(exception, context);
+                originalLogHandler.LogException(new _(exception.Message.LinkPaths()), context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
@@ -211,14 +208,9 @@ namespace DevelopmentEssentials.FilteredConsole {
             }
 
             private class _ : Exception {
-
-                // public _(string message) : base(message) {}
-                public _(string message, Exception innerException) : base(message, innerException) {}
-
+                public _(string message) : base(message) {}
             }
-
         }
-
     }
 
 }
