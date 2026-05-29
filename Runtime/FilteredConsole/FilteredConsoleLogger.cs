@@ -2,7 +2,6 @@
 using System.Linq;
 using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEditor;
 using UnityEngine;
 using Color = System.Drawing.Color;
@@ -153,7 +152,7 @@ namespace DevelopmentEssentials.FilteredConsole {
 
             [HideInCallstack]
             public void LogFormat(LogType logType, Object context, string format, params object[] args) {
-                string message = string.Format(format, args);
+                string message = string.Format(format, args).LinkPaths();
 
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
             // Sentry.SentrySdk.AddBreadcrumb(message.Unformatted(), level: logType switch {
@@ -176,7 +175,7 @@ namespace DevelopmentEssentials.FilteredConsole {
                     case LogType.Error when blacklistError.Any(message.Contains):
                         return;
                     default:
-                        originalLogHandler.LogFormat(logType, context, format.LinkPaths(), args);
+                        originalLogHandler.LogFormat(logType, context, format, args);
                         break;
                 }
             }
@@ -196,22 +195,25 @@ namespace DevelopmentEssentials.FilteredConsole {
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                originalLogHandler.LogException(new OriginalException(exception.Message.Unformatted().LinkPaths().Colored(Color.DarkRed), exception), context);
+                originalLogHandler.LogException(new _(exception.Message.Unformatted().LinkPaths(), exception), context);
+
+                // originalLogHandler.LogException(exception, context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
 
                 // while (ex.InnerException != null) {
                 //     string message = $"  ↳{ex.Message.Unformatted()}";
-                //     originalLogHandler.LogException(new E(message), context);
+                //     originalLogHandler.LogException(new _(message), context);
                 //     ex = ex.InnerException;
                 // }
 #endif
             }
 
-            private sealed class OriginalException : Exception {
+            private class _ : Exception {
 
-                public OriginalException(string message, Exception innerException) : base(message, innerException) {}
+                // public _(string message) : base(message) {}
+                public _(string message, Exception innerException) : base(message, innerException) {}
 
             }
 
