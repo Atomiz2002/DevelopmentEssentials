@@ -153,7 +153,7 @@ namespace DevelopmentEssentials.FilteredConsole {
 
             [HideInCallstack]
             public void LogFormat(LogType logType, Object context, string format, params object[] args) {
-                string message = string.Format(format, args).LinkPaths();
+                string message = string.Format(format, args);
 
 #if !UNITY_EDITOR && !DEVELOPMENT_BUILD
             // Sentry.SentrySdk.AddBreadcrumb(message.Unformatted(), level: logType switch {
@@ -176,7 +176,7 @@ namespace DevelopmentEssentials.FilteredConsole {
                     case LogType.Error when blacklistError.Any(message.Contains):
                         return;
                     default:
-                        originalLogHandler.LogFormat(logType, context, message, args);
+                        originalLogHandler.LogFormat(logType, context, format.LinkPaths(), args);
                         break;
                 }
             }
