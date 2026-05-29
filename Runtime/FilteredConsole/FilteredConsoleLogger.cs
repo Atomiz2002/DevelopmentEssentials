@@ -19,6 +19,7 @@ namespace DevelopmentEssentials.FilteredConsole {
     [InitializeOnLoad]
 #endif
     public static class FilteredConsoleLogger {
+
         private static bool        usingOriginalLogger;
         private static ILogHandler originalLogHandler;
         private static ILogHandler filteredLogHandler;
@@ -102,6 +103,7 @@ namespace DevelopmentEssentials.FilteredConsole {
         }
 
         private class FilteredLogger : ILogHandler {
+
 #if UNITY_EDITOR && !SIMULATE_BUILD
             private EditorWindow consoleWindow;
 #endif
@@ -194,7 +196,7 @@ namespace DevelopmentEssentials.FilteredConsole {
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                originalLogHandler.LogException(new E(exception.Message.LinkPaths()), context);
+                originalLogHandler.LogException(new OriginalException(exception.Message.Unformatted().LinkPaths().Colored(Color.DarkRed), exception), context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
@@ -207,10 +209,14 @@ namespace DevelopmentEssentials.FilteredConsole {
 #endif
             }
 
-            private class E : Exception {
-                public E(string message) : base(message) {}
+            private sealed class OriginalException : Exception {
+
+                public OriginalException(string message, Exception innerException) : base(message, innerException) {}
+
             }
+
         }
+
     }
 
 }
