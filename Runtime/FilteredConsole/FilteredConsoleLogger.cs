@@ -194,21 +194,21 @@ namespace DevelopmentEssentials.FilteredConsole {
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                originalLogHandler.LogException(new _(exception.Message.LinkPaths()), context);
+                originalLogHandler.LogException(new E(exception.Message.LinkPaths()), context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
 
                 // while (ex.InnerException != null) {
                 //     string message = $"  ↳{ex.Message.Unformatted()}";
-                //     originalLogHandler.LogException(new _(message), context);
+                //     originalLogHandler.LogException(new E(message), context);
                 //     ex = ex.InnerException;
                 // }
 #endif
             }
 
-            private class _ : Exception {
-                public _(string message) : base(message) {}
+            private class E : Exception {
+                public E(string message) : base(message) {}
             }
         }
     }
