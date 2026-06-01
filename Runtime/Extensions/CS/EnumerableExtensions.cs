@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using JetBrains.Annotations;
+using UnityEditor;
 using Object = UnityEngine.Object;
 
 namespace DevelopmentEssentials.Extensions.CS {
@@ -65,6 +66,13 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static IEnumerable<T> Existing<T>(this IEnumerable<T> collection) where T : Object => collection.Where(x => x);
 
+        /// Handles distinct for non/existing <see cref="UnityEngine.Object"/>s
+        [Pure]
+        public static IEnumerable<T> DistinctUnity<T>(this IEnumerable<T> collection) where T : Object =>
+            collection
+                .GroupBy(GlobalObjectId.GetGlobalObjectIdSlow)
+                .Select(group => group.First());
+
         /// Filters out the null <see cref="object"/>s
         [Pure]
         public static IEnumerable<T> NotNull<T>(this IEnumerable<T> collection) => collection.Where(x => x != null);
@@ -72,6 +80,22 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs) =>
             pairs.ToDictionary(pair => pair.Key, pair => pair.Value);
+
+        [Pure]
+        public static IEnumerable<TKey> Keys<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs) {
+            if (pairs is Dictionary<TKey, TValue> dict)
+                return dict.Keys;
+
+            return pairs.Select(p => p.Key);
+        }
+
+        [Pure]
+        public static IEnumerable<TValue> Values<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> pairs) {
+            if (pairs is Dictionary<TKey, TValue> dict)
+                return dict.Values;
+
+            return pairs.Select(p => p.Value);
+        }
 
         [Pure]
         public static IEnumerable<T> Enumerate<T>(this int count, Func<int, T> func) => Enumerable.Range(0, count).Select(func);
@@ -461,6 +485,30 @@ namespace DevelopmentEssentials.Extensions.CS {
             return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
                 source.ElementAtOrDefault(2), source.ElementAtOrDefault(3));
         }
+
+        public static void Add<T1, T2>(this IList<(T1, T2)> source, T1 item1, T2 item2) =>
+            source.Add((item1, item2));
+
+        [Pure]
+        public static bool Contains1<T1, T2>(this IEnumerable<(T1, T2)> source, T1 item1) =>
+            source.Any(tuple => Equals(tuple.Item1, item1));
+
+        [Pure]
+        public static bool Contains2<T1, T2>(this IEnumerable<(T1, T2)> source, T2 item2) =>
+            source.Any(tuple => Equals(tuple.Item2, item2));
+
+        [Pure]
+        public static bool Contains1(this IEnumerable<ITuple> source, object item1) =>
+            source.Any(tuple => tuple.Length > 0 && Equals(tuple[0], item1));
+
+        [Pure]
+        public static bool Contains2(this IEnumerable<ITuple> source, object item2) =>
+            source.Any(tuple => tuple.Length > 1 && Equals(tuple[1], item2));
+
+        // unnecessary?
+        // [Pure]
+        // public static bool Contains2(this IEnumerable<ITuple> source, object item1, object item2) =>
+        //     source.Any(tuple => tuple.Length > 1 && Equals(tuple[0], item1) && Equals(tuple[1], item2));
 
         #endregion
 
