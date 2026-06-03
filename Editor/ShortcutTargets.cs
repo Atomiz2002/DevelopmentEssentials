@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEditor;
 
 namespace DevelopmentEssentials.Editor {

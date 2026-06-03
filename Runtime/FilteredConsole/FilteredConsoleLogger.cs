@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
 using UnityEditor;
@@ -8,7 +9,6 @@ using Color = System.Drawing.Color;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 #if ONLY_EXCEPTIONS
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using System.Diagnostics;
 #endif
 
@@ -195,26 +195,19 @@ namespace DevelopmentEssentials.FilteredConsole {
                 if (blacklistException.Any(str => exception.Message.Contains(str)))
                     return;
 
-                originalLogHandler.LogException(new _(exception.Message.Unformatted().LinkPaths(), exception), context);
-
-                // originalLogHandler.LogException(exception, context);
+                FieldInfo field = typeof(Exception).GetField("_message", BindingFlags.NonPublic | BindingFlags.Instance);
+                field!.SetValue(exception, exception.Message.Unformatted().LinkPaths().Bold().Colored(Color.Red));
+                originalLogHandler.LogException(exception, context);
 
 #if UNITY_EDITOR && !SIMULATE_BUILD
                 // Exception ex = exception;
 
                 // while (ex.InnerException != null) {
                 //     string message = $"  ↳{ex.Message.Unformatted()}";
-                //     originalLogHandler.LogException(new _(message), context);
+                //     originalLogHandler.LogException(new E(message), context);
                 //     ex = ex.InnerException;
                 // }
 #endif
-            }
-
-            private class _ : Exception {
-
-                // public _(string message) : base(message) {}
-                public _(string message, Exception innerException) : base(message, innerException) {}
-
             }
 
         }

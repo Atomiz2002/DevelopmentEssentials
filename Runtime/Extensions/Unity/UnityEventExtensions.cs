@@ -3,7 +3,6 @@
 using System;
 using UnityEngine.Events;
 #if ENABLE_LOGS
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 #endif
 
 namespace DevelopmentEssentials.Extensions.Unity {

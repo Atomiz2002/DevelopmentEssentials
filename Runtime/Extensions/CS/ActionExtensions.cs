@@ -2,7 +2,6 @@
 
 using System;
 #if ENABLE_LOGS
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 #endif
 
 namespace DevelopmentEssentials.Extensions.CS {

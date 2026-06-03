@@ -3,7 +3,6 @@
 using System;
 using UnityEngine;
 #if ENABLE_LOGS
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 #endif
 
 // TODO: Build a window to track all invokes

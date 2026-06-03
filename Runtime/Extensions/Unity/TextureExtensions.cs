@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Linq;
 using DevelopmentEssentials.Extensions.CS;
 using JetBrains.Annotations;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace DevelopmentEssentials.Extensions.Unity {
 
@@ -54,16 +58,17 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return snapshot;
         }
 
-        /// Trims the pixels of the specified color (default = transparent) from a Texture, returning a new Texture2D.
-        public static Texture2D Trimmed(this Texture texture, bool uniform = false, Color color = default) =>
-            !texture ? null : texture.Read().Trimmed(uniform, color);
+        /// Trims the pixels from the texture, returning a new Texture2D.
+        /// <param name="trimColors">defaults to <c>pixel.a == 0</c></param>
+        public static Texture2D Trimmed(this Texture texture, bool square = false, Func<Color, bool> trimColors = null) =>
+            !texture ? null : texture.Read().Trimmed(square, trimColors);
 
-        public static Texture2D Trimmed(this Texture2D texture, bool uniform = false, Color color = default) {
-            if (!texture)
+        /// <inheritdoc cref="Trimmed(UnityEngine.Texture,bool,System.Func{UnityEngine.Color,bool})"/>
+        public static Texture2D Trimmed(this Texture2D texture, bool square = false, Func<Color, bool> trimColors = null) {
+            if (!texture || !texture.isReadable)
                 return null;
 
-            if (!texture.isReadable)
-                return null;
+            trimColors ??= c => c.a == 0;
 
             Color[] pixels = texture.GetPixels();
 
@@ -77,8 +82,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
             for (int x = 0; x < width; x++) {
                 Color pixel = pixels[x + y * width];
 
-                if (pixel == color) continue;
-                if (pixel.a == 0 && color.a == 0) continue;
+                if (trimColors.InvokeSafe(pixel))
+                    continue;
 
                 if (x < xMin) xMin = x;
                 if (x > xMax) xMax = x;
@@ -94,7 +99,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 return null; // or clear texture
             }
 
-            if (uniform) {
+            if (square) {
                 if (w < h)
                     xMin -= (h - w) / 2;
                 else if (h < w)
@@ -103,15 +108,23 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 w = h = Math.Max(w, h);
             }
 
-            Texture2D trimmedTexture = new(w, h);
-            Color[]   finalPixels    = new Color[w * h];
+            Texture2D trimmedTexture = new(w, h) {
+                filterMode          = texture.filterMode,
+                anisoLevel          = texture.anisoLevel,
+                alphaIsTransparency = texture.alphaIsTransparency
+            };
+
+            Color[] finalPixels = new Color[w * h];
 
             for (int y = 0; y < h; y++)
             for (int x = 0; x < w; x++) {
-                try {
-                    finalPixels[x + y * w] = pixels[(x + xMin) + (y + yMin) * width];
+                int sourceX = xMin + x;
+                int sourceY = yMin + y;
+
+                if (sourceX >= 0 && sourceX < width && sourceY >= 0 && sourceY < height) {
+                    finalPixels[x + y * w] = pixels[sourceX + sourceY * width];
                 }
-                catch (IndexOutOfRangeException) {
+                else {
                     finalPixels[x + y * w] = Color.clear;
                 }
             }
@@ -122,21 +135,24 @@ namespace DevelopmentEssentials.Extensions.Unity {
             return trimmedTexture;
         }
 
-        public static void Trim([CanBeNull] this Texture texture, bool uniform = false, Color color = default) {
+        /// Trims the pixels from the texture.
+        /// <param name="trimColors">defaults to <c>pixel.a == 0</c></param>
+        public static void Trim([CanBeNull] this Texture texture, bool uniform = false, Func<Color, bool> trimColors = null) {
             if (!texture)
                 return;
 
             if (texture.Is(out Texture2D t))
                 t.Trim(uniform);
             else
-                texture.Read().Trim(uniform, color);
+                texture.Read().Trim(uniform, trimColors);
         }
 
-        public static void Trim([CanBeNull] this Texture2D texture, bool uniform = false, Color color = default) {
+        /// <inheritdoc cref="Trim"/>
+        public static void Trim([CanBeNull] this Texture2D texture, bool uniform = false, Func<Color, bool> trimColors = null) {
             if (!texture || !texture.isReadable)
                 return;
 
-            Texture2D newTexture = texture.Trimmed(uniform, color);
+            Texture2D newTexture = texture.Trimmed(uniform, trimColors);
             texture.Reinitialize(newTexture.width, newTexture.height);
             texture.SetPixels(newTexture.GetPixels());
             texture.Apply();
@@ -158,7 +174,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             Texture2D t = new(texture.width, texture.height, TextureFormat.ARGB32, false);
             Graphics.CopyTexture(texture, t);
-            return t;
+            return t.SetFilter(texture.filterMode);
         }
 
         [Pure]
@@ -199,12 +215,16 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
             result.ReadPixels(new(0, 0, w, h), 0, 0);
             result.Apply();
+            result.SetFilter(texture.filterMode);
 
             RenderTexture.active = null;
             RenderTexture.ReleaseTemporary(renderTexture);
 
             return result;
         }
+
+        [Pure]
+        public static Vector2Int Dimensions(this Texture2D tex) => new(tex.width, tex.height);
 
         private static Material underlayMaterial;
 
@@ -246,11 +266,22 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
         [Pure]
-        public static Sprite ToSprite([CanBeNull] this Texture2D texture) {
+        public static Sprite ToSprite([CanBeNull] this Texture2D texture, Rect rect = default, Vector2? pivot = null, float ppu = 100f) {
             if (!texture)
                 return null;
 
-            return Sprite.Create(texture, new(0, 0, texture.width, texture.height), new(.5f, .5f));
+#if UNITY_EDITOR && !SIMULATE_BUILD
+            string          path     = AssetDatabase.GetAssetPath(texture);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+
+            if (importer != null)
+                ppu = importer.spritePixelsPerUnit;
+#endif
+
+            if (rect == default)
+                rect = new(0, 0, texture.width, texture.height);
+
+            return Sprite.Create(texture, rect, pivot ?? new(.5f, .5f), ppu);
         }
 
         [Pure]

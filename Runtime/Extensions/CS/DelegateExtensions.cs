@@ -1,5 +1,4 @@
 using System;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 
 namespace DevelopmentEssentials.Extensions.CS {
 

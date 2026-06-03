@@ -2,7 +2,6 @@
 using System;
 using Cysharp.Threading.Tasks;
 using DevelopmentEssentials.Extensions.CS;
-using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using UnityEngine;
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_ODIN_INSPECTOR
 using Sirenix.OdinInspector;

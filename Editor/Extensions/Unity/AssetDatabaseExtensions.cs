@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using DevelopmentEssentials.Extensions.CS;
 using DevelopmentEssentials.Extensions.Unity;
+using DevelopmentEssentials.Extensions.Unity.ExtendedLogger;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
@@ -17,23 +18,52 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
 #if UNITY_EDITOR
 
+        public static string UnitifyPath(ref string path)  => path = path.Replace("\\", "/");
+        public static string UnitifyPath(this string path) => UnitifyPath(ref path);
+
         #region Assets
 
-        public static StackFrame OpenAsset([CanBeNull] this StackFrame frame, string path = null, int line = 0, int column = 0) {
+        public static string OpenAsset([CanBeNull] this string path, int line = 0, int column = 0, bool logError = true) {
+            if (path.IsNullOrWhiteSpace()) {
+                if (logError)
+                    "Failed to open empty asset path".LogErr();
+
+                return path;
+            }
+
+            UnitifyPath(ref path);
+
+            if (path.Contains("Assets")) {
+                AssetDatabase.OpenAsset(path.StartAt("Assets").LoadAsset(), line, column);
+                return path;
+            }
+
+            if (path.Contains("Packages")) {
+                Process.Start(EditorPrefs.GetString("kScriptsDefaultApp"), $"--line {line} --column {column - 1} \"{path[2..]}\"");
+                return path;
+            }
+
+            if (logError)
+                $"Failed to open: {path}".LogErr();
+
+            return path;
+        }
+
+        public static GUID OpenAsset(this GUID guid, int line = 0, int column = 0) {
+            AssetDatabase.OpenAsset(guid.LoadAssetByGUID(), line, column);
+            return guid;
+        }
+
+        public static StackFrame OpenAsset([CanBeNull] this StackFrame frame, string path = null, int line = 0, int column = 0, bool logError = true) {
             if (frame != null) {
                 path   = frame.GetFileName();
                 line   = frame.GetFileLineNumber();
                 column = frame.GetFileColumnNumber();
             }
 
-            if (path!.Contains("Assets")) {
-                AssetDatabase.OpenAsset(AssetDatabase.LoadMainAssetAtPath(path.StartAt("Assets")), line, column);
-            }
-            else {
-                string quantumFilePath    = Path.Join(new DirectoryInfo(Application.dataPath).Parent!.Parent!.SafeString(), path.StartAt("quantum_code"));
-                string quantumProjectPath = quantumFilePath.EndAt("quantum.code", false, "quantum_code.sln");
-                Process.Start(EditorPrefs.GetString("kScriptsDefaultApp"), $"--project \"{quantumProjectPath}\" --line {line} --column {column - 1} -- \"{quantumFilePath}\"");
-            }
+            UnitifyPath(ref path);
+
+            path.OpenAsset(line, column, logError);
 
             return frame;
         }
@@ -67,7 +97,7 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
         [Pure]
         [CanBeNull]
-        public static Object LoadAsset(this string path) => AssetDatabase.LoadMainAssetAtPath(path);
+        public static Object LoadAsset(this string path) => AssetDatabase.LoadMainAssetAtPath(path.UnitifyPath());
 
         [Pure]
         public static void LoadAsset<T>(this string assetPath, [CanBeNull] out T asset) where T : Object => asset = AssetDatabase.LoadAssetAtPath<T>(assetPath);
@@ -86,13 +116,13 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
         [Pure]
         [CanBeNull]
-        public static T LoadAsset<T>(this string path) where T : Object => AssetDatabase.LoadAssetAtPath<T>(path);
+        public static T LoadAsset<T>(this string path) where T : Object => AssetDatabase.LoadAssetAtPath<T>(path.UnitifyPath());
 
         [Pure]
         public static bool TryLoadAsset<T>(this string path, out T asset) where T : Object => asset = AssetDatabase.LoadAssetAtPath<T>(path);
 
         [Pure]
-        public static IEnumerable<T> LoadAssets<T>(this string path) where T : Object => AssetDatabase.LoadAllAssetsAtPath(path).OfType<T>();
+        public static IEnumerable<T> LoadAssets<T>(this string path) where T : Object => AssetDatabase.LoadAllAssetsAtPath(path.UnitifyPath()).OfType<T>();
 
         [Pure]
         [CanBeNull]
