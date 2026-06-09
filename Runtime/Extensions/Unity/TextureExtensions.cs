@@ -108,8 +108,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
                 w = h = Math.Max(w, h);
             }
 
-            Texture2D trimmedTexture = new(w, h) {
+            Texture2D trimmedTexture = new(w, h, TextureFormat.ARGB32, false) {
                 filterMode          = texture.filterMode,
+                wrapMode            = texture.wrapMode,
                 anisoLevel          = texture.anisoLevel,
                 alphaIsTransparency = texture.alphaIsTransparency
             };
