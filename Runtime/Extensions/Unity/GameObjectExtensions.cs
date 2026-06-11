@@ -189,8 +189,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         public static T Select<T>(this T t) where T : Object {
 #if UNITY_EDITOR
-            if (t.Is(out MonoBehaviour mono))
-                Selection.activeObject = mono.gameObject;
+            if (t.Is(out Component c))
+                Selection.activeObject = c.gameObject;
             else
                 Selection.activeObject = t;
 #endif
@@ -199,8 +199,8 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
         public static T Ping<T>(this T t) where T : Object {
 #if UNITY_EDITOR
-            if (t.Is(out MonoBehaviour mono))
-                EditorGUIUtility.PingObject(mono.gameObject);
+            if (t.Is(out Component c))
+                EditorGUIUtility.PingObject(c.gameObject);
             else
                 EditorGUIUtility.PingObject(t);
 #endif

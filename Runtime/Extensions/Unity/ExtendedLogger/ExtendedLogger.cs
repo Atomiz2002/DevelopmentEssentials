@@ -357,8 +357,8 @@ public static class ExtendedLogger {
         // ReplacePathsWithLinks(ref message);
 
         Object ctx = context switch {
-            Component c   => c.gameObject,
             GameObject go => go,
+            Component c   => c.n()?.gameObject,
             _             => (context as Object).n() ?? formattable as Object
         };
 
