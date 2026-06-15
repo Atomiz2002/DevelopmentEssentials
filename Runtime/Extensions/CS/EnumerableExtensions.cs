@@ -464,46 +464,109 @@ namespace DevelopmentEssentials.Extensions.CS {
             return array;
         }
 
+        #region ToTuple
+
         [Pure]
-        public static (T, T) Tuple2<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1));
+        public static (T, T) Tuple2<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1));
         }
 
         [Pure]
-        public static (T, T, T) Tuple3<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
-                source.ElementAtOrDefault(2));
+        public static (T, T, T) Tuple3<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1), a.ElementAtOrDefault(2));
         }
 
         [Pure]
-        public static (T, T, T, T) Tuple4<T>(this IEnumerable<T> source) {
-            source = source.ToArray();
-
-            return (source.ElementAtOrDefault(0), source.ElementAtOrDefault(1),
-                source.ElementAtOrDefault(2), source.ElementAtOrDefault(3));
+        public static (T, T, T, T) Tuple4<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1), a.ElementAtOrDefault(2), a.ElementAtOrDefault(3));
         }
 
-        public static void Add<T1, T2>(this IList<(T1, T2)> source, T1 item1, T2 item2) =>
-            source.Add((item1, item2));
+        [Pure]
+        public static (T, T, T, T, T) Tuple5<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1), a.ElementAtOrDefault(2), a.ElementAtOrDefault(3), a.ElementAtOrDefault(4));
+        }
 
         [Pure]
-        public static bool Contains1<T1, T2>(this IEnumerable<(T1, T2)> source, T1 item1) =>
-            source.Any(tuple => Equals(tuple.Item1, item1));
+        public static (T, T, T, T, T, T) Tuple6<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1), a.ElementAtOrDefault(2), a.ElementAtOrDefault(3), a.ElementAtOrDefault(4), a.ElementAtOrDefault(5));
+        }
 
         [Pure]
-        public static bool Contains2<T1, T2>(this IEnumerable<(T1, T2)> source, T2 item2) =>
-            source.Any(tuple => Equals(tuple.Item2, item2));
+        public static (T, T, T, T, T, T, T) Tuple7<T>(this IEnumerable<T> s) {
+            T[] a = s.ToArray();
+            return (a.ElementAtOrDefault(0), a.ElementAtOrDefault(1), a.ElementAtOrDefault(2), a.ElementAtOrDefault(3), a.ElementAtOrDefault(4), a.ElementAtOrDefault(5), a.ElementAtOrDefault(6));
+        }
 
-        [Pure]
-        public static bool Contains1(this IEnumerable<ITuple> source, object item1) =>
-            source.Any(tuple => tuple.Length > 0 && Equals(tuple[0], item1));
+        #endregion
 
-        [Pure]
-        public static bool Contains2(this IEnumerable<ITuple> source, object item2) =>
-            source.Any(tuple => tuple.Length > 1 && Equals(tuple[1], item2));
+        #region Add
+
+        public static void Add<T1, T2>(this IList<(T1, T2)> s, T1 i1, T2 i2)                                                                            => s.Add((i1, i2));
+        public static void Add<T1, T2, T3>(this IList<(T1, T2, T3)> s, T1 i1, T2 i2, T3 i3)                                                             => s.Add((i1, i2, i3));
+        public static void Add<T1, T2, T3, T4>(this IList<(T1, T2, T3, T4)> s, T1 i1, T2 i2, T3 i3, T4 i4)                                              => s.Add((i1, i2, i3, i4));
+        public static void Add<T1, T2, T3, T4, T5>(this IList<(T1, T2, T3, T4, T5)> s, T1 i1, T2 i2, T3 i3, T4 i4, T5 i5)                               => s.Add((i1, i2, i3, i4, i5));
+        public static void Add<T1, T2, T3, T4, T5, T6>(this IList<(T1, T2, T3, T4, T5, T6)> s, T1 i1, T2 i2, T3 i3, T4 i4, T5 i5, T6 i6)                => s.Add((i1, i2, i3, i4, i5, i6));
+        public static void Add<T1, T2, T3, T4, T5, T6, T7>(this IList<(T1, T2, T3, T4, T5, T6, T7)> s, T1 i1, T2 i2, T3 i3, T4 i4, T5 i5, T6 i6, T7 i7) => s.Add((i1, i2, i3, i4, i5, i6, i7));
+
+        #endregion
+
+        #region Contains
+
+        // Contains1
+        [Pure] public static bool Contains1<T1, T2>(this IEnumerable<(T1, T2)> s, T1 i)                                         => s.Any(t => Equals(t.Item1, i));
+        [Pure] public static bool Contains1<T1, T2, T3>(this IEnumerable<(T1, T2, T3)> s, T1 i)                                 => s.Any(t => Equals(t.Item1, i));
+        [Pure] public static bool Contains1<T1, T2, T3, T4>(this IEnumerable<(T1, T2, T3, T4)> s, T1 i)                         => s.Any(t => Equals(t.Item1, i));
+        [Pure] public static bool Contains1<T1, T2, T3, T4, T5>(this IEnumerable<(T1, T2, T3, T4, T5)> s, T1 i)                 => s.Any(t => Equals(t.Item1, i));
+        [Pure] public static bool Contains1<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T1 i)         => s.Any(t => Equals(t.Item1, i));
+        [Pure] public static bool Contains1<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T1 i) => s.Any(t => Equals(t.Item1, i));
+
+        // Contains2
+        [Pure] public static bool Contains2<T1, T2>(this IEnumerable<(T1, T2)> s, T2 i)                                         => s.Any(t => Equals(t.Item2, i));
+        [Pure] public static bool Contains2<T1, T2, T3>(this IEnumerable<(T1, T2, T3)> s, T2 i)                                 => s.Any(t => Equals(t.Item2, i));
+        [Pure] public static bool Contains2<T1, T2, T3, T4>(this IEnumerable<(T1, T2, T3, T4)> s, T2 i)                         => s.Any(t => Equals(t.Item2, i));
+        [Pure] public static bool Contains2<T1, T2, T3, T4, T5>(this IEnumerable<(T1, T2, T3, T4, T5)> s, T2 i)                 => s.Any(t => Equals(t.Item2, i));
+        [Pure] public static bool Contains2<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T2 i)         => s.Any(t => Equals(t.Item2, i));
+        [Pure] public static bool Contains2<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T2 i) => s.Any(t => Equals(t.Item2, i));
+
+        // Contains3
+        [Pure] public static bool Contains3<T1, T2, T3>(this IEnumerable<(T1, T2, T3)> s, T3 i)                                 => s.Any(t => Equals(t.Item3, i));
+        [Pure] public static bool Contains3<T1, T2, T3, T4>(this IEnumerable<(T1, T2, T3, T4)> s, T3 i)                         => s.Any(t => Equals(t.Item3, i));
+        [Pure] public static bool Contains3<T1, T2, T3, T4, T5>(this IEnumerable<(T1, T2, T3, T4, T5)> s, T3 i)                 => s.Any(t => Equals(t.Item3, i));
+        [Pure] public static bool Contains3<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T3 i)         => s.Any(t => Equals(t.Item3, i));
+        [Pure] public static bool Contains3<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T3 i) => s.Any(t => Equals(t.Item3, i));
+
+        // Contains4
+        [Pure] public static bool Contains4<T1, T2, T3, T4>(this IEnumerable<(T1, T2, T3, T4)> s, T4 i)                         => s.Any(t => Equals(t.Item4, i));
+        [Pure] public static bool Contains4<T1, T2, T3, T4, T5>(this IEnumerable<(T1, T2, T3, T4, T5)> s, T4 i)                 => s.Any(t => Equals(t.Item4, i));
+        [Pure] public static bool Contains4<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T4 i)         => s.Any(t => Equals(t.Item4, i));
+        [Pure] public static bool Contains4<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T4 i) => s.Any(t => Equals(t.Item4, i));
+
+        // Contains5
+        [Pure] public static bool Contains5<T1, T2, T3, T4, T5>(this IEnumerable<(T1, T2, T3, T4, T5)> s, T5 i)                 => s.Any(t => Equals(t.Item5, i));
+        [Pure] public static bool Contains5<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T5 i)         => s.Any(t => Equals(t.Item5, i));
+        [Pure] public static bool Contains5<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T5 i) => s.Any(t => Equals(t.Item5, i));
+
+        // Contains6
+        [Pure] public static bool Contains6<T1, T2, T3, T4, T5, T6>(this IEnumerable<(T1, T2, T3, T4, T5, T6)> s, T6 i)         => s.Any(t => Equals(t.Item6, i));
+        [Pure] public static bool Contains6<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T6 i) => s.Any(t => Equals(t.Item6, i));
+
+        // Contains7
+        [Pure] public static bool Contains7<T1, T2, T3, T4, T5, T6, T7>(this IEnumerable<(T1, T2, T3, T4, T5, T6, T7)> s, T7 i) => s.Any(t => Equals(t.Item7, i));
+
+        [Pure] public static bool Contains1(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 0 && Equals(t[0], i));
+        [Pure] public static bool Contains2(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 1 && Equals(t[1], i));
+        [Pure] public static bool Contains3(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 2 && Equals(t[2], i));
+        [Pure] public static bool Contains4(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 3 && Equals(t[3], i));
+        [Pure] public static bool Contains5(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 4 && Equals(t[4], i));
+        [Pure] public static bool Contains6(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 5 && Equals(t[5], i));
+        [Pure] public static bool Contains7(this IEnumerable<ITuple> s, object i) => s.Any(t => t.Length > 6 && Equals(t[6], i));
+
+        #endregion
 
         // unnecessary?
         // [Pure]
