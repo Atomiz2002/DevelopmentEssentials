@@ -35,12 +35,12 @@ namespace DevelopmentEssentials.FilteredConsole {
             ToggleLogs(true, "ENABLE_LOGS");
 #elif UNITY_EDITOR
 #if SIMULATE_BUILD
-        ToggleLogs(false, "!ENABLE_LOGS && SIMULATE_BUILD");
+            ToggleLogs(false, "!ENABLE_LOGS && SIMULATE_BUILD");
 #else
-        ToggleLogs(true, "UNITY_EDITOR");
+            ToggleLogs(true);
 #endif
 #else
-        ToggleLogs(false, "SIMULATE_BUILD");
+            ToggleLogs(false, "SIMULATE_BUILD");
 #endif
             ToggleLogger(false);
         }
