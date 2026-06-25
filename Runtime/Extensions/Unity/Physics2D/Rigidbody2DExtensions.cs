@@ -4,6 +4,8 @@ namespace DevelopmentEssentials.Extensions.Unity.Physics2D {
 
     public static class Rigidbody2DExtensions {
 
+        // maybe do method for direction
+
         public static void MoveTowards(this Rigidbody2D rb, Vector2 target, float speed, float tolerance = Consts.TOLERANCE) {
             Vector2 position = rb.position;
 
