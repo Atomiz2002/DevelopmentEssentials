@@ -15,6 +15,12 @@
       ]
     },
     {
+      "define": "DEVELOPMENT_ESSENTIALS_EDITOR_TILEMAPS",
+      "dependencies": [
+        "Unity.2D.Tilemap.Editor"
+      ]
+    },
+    {
       "define": "DEVELOPMENT_ESSENTIALS_EDITOR_ODIN_INSPECTOR",
       "dependencies": [
         "Sirenix.OdinInspector.Attributes.dll",

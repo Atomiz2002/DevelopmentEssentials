@@ -7,7 +7,8 @@
     "rootNamespace": "DevelopmentEssentials",
     "references": [
         "DevelopmentEssentials",
-        "ComponentNames.Editor"
+        "ComponentNames.Editor",
+        "Unity.2D.Tilemap.Editor"
     ],
     "precompiledReferences": [
         "Sirenix.OdinInspector.Attributes.dll",
@@ -32,6 +33,11 @@
             "name": "Unity",
             "expression": "",
             "define": "DEVELOPMENT_ESSENTIALS_EDITOR_COMPONENT_NAMES"
+        },
+        {
+            "name": "Unity",
+            "expression": "",
+            "define": "DEVELOPMENT_ESSENTIALS_EDITOR_TILEMAPS"
         },
         {
             "name": "Unity",

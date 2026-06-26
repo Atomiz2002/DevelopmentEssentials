@@ -119,7 +119,14 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
         public static T LoadAsset<T>(this string path) where T : Object => AssetDatabase.LoadAssetAtPath<T>(path.UnitifyPath());
 
         [Pure]
-        public static bool TryLoadAsset<T>(this string path, out T asset) where T : Object => asset = AssetDatabase.LoadAssetAtPath<T>(path);
+        [CanBeNull]
+        public static T LoadAssetImporter<T>(this string path) where T : AssetImporter => (T)AssetImporter.GetAtPath(path.UnitifyPath());
+
+        [Pure]
+        public static bool TryLoadAsset<T>(this string path, out T asset) where T : Object => asset = path.LoadAsset<T>();
+
+        [Pure]
+        public static bool TryLoadAssetImporter<T>(this string path, out T asset) where T : AssetImporter => asset = path.LoadAssetImporter<T>();
 
         [Pure]
         public static IEnumerable<T> LoadAssets<T>(this string path) where T : Object => AssetDatabase.LoadAllAssetsAtPath(path.UnitifyPath()).OfType<T>();

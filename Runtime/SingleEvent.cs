@@ -62,7 +62,7 @@ namespace DevelopmentEssentials {
                 onCompleted = null; // Wipe queue to prevent re-fire
             }
 
-            subscribers.SafeInvoke(t); // Execute all subscribers. ?. to avoid the exception if none
+            subscribers.InvokeSafe(t); // Execute all subscribers. ?. to avoid the exception if none
         }
 
         // Allows: await instance;
@@ -77,7 +77,7 @@ namespace DevelopmentEssentials {
 
             lock (e.Lock) {
                 if (e.utcs.Task.Status == UniTaskStatus.Succeeded) {
-                    callback?.SafeInvoke(e.utcs.Task.GetAwaiter().GetResult());
+                    callback?.InvokeSafe(e.utcs.Task.GetAwaiter().GetResult());
                 }
                 else {
                     e.onCompleted -= callback; // Prevent duplicates

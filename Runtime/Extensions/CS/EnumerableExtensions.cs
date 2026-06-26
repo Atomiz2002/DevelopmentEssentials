@@ -234,13 +234,13 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static void ForEach(this object obj, Action<object> action) {
             if (obj is IEnumerable enumerable and not string) {
                 foreach (object k in enumerable)
-                    action.SafeInvoke(k);
+                    action.InvokeSafe(k);
             }
             else if (obj is ITuple tuple) {
-                tuple.ForEach(action.SafeInvoke);
+                tuple.ForEach(action.InvokeSafe);
             }
             else
-                action.SafeInvoke(obj);
+                action.InvokeSafe(obj);
         }
 
         public static IEnumerable Enumerate(this object obj) {
@@ -438,7 +438,7 @@ namespace DevelopmentEssentials.Extensions.CS {
                 return;
 
             for (int i = 0; i < tuple.Length; i++)
-                action.SafeInvoke(tuple[i]);
+                action.InvokeSafe(tuple[i]);
         }
 
         [Pure]
