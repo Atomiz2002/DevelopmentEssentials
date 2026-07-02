@@ -5,7 +5,7 @@ using static System.Attribute;
 
 namespace DevelopmentEssentials.Attributes {
 
-    public static class Get {
+    public static class GetAttribute {
 
         public static Color Color(object type, string name) => FieldAttribute<ColoredAttribute>(type, name).Color;
 

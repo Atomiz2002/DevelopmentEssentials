@@ -14,6 +14,7 @@ namespace DevelopmentEssentials {
 
         private static T instance;
         public static  T Instance => instance ? instance : instance = FindFirstObjectByType<T>();
+        public static  T ProxyInstance => Instance ? instance : instance = GameObjectExtensions.New<T>();
 
         protected readonly UnityEvent OnInitializedEvent = new();
 
