@@ -367,7 +367,7 @@ namespace DevelopmentEssentials.Extensions.CS {
         #region IDictionary
 
         public static IDictionary<TKey, TValue> RemoveKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, bool> predicate) =>
-            dictionary.RemoveKeys((k, _) => predicate.Invoke(k)); // InvokeSafe?
+            dictionary.RemoveKeys((k, _) => predicate.InvokeSafe(k));
 
         public static IDictionary<TKey, TValue> RemoveKeys<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> predicate) {
             List<TKey> keysToRemove = new();
@@ -402,10 +402,9 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static IDictionary<TKey, TValue> ExistingValues<TKey, TValue>(this IDictionary<TKey, TValue> dictionary) where TValue : Object => dictionary.Where(x => x.Value).ToDictionary();
 
         public static IDictionary<TKey, TValue> RemoveAll<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, Func<TKey, TValue, bool> predicate) {
-            foreach ((TKey key, TValue value) in dictionary)
-                if (predicate(key, value))
-                    dictionary.Remove(key);
-
+            List<TKey> keysToRemove = dictionary.Where(kvp => predicate(kvp.Key, kvp.Value)).Select(kvp => kvp.Key).ToList();
+            foreach (TKey key in keysToRemove)
+                dictionary.Remove(key);
             return dictionary;
         }
 
