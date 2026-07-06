@@ -10,11 +10,10 @@ namespace DevelopmentEssentials.Extensions.Unity.Physics2D {
         }
 
         public static void PushTowards(this Rigidbody2D rb, Vector2 direction, float force) =>
-            rb.AddForce(direction * force, ForceMode2D.Impulse);
+            rb.AddForce(direction * force * rb.mass, ForceMode2D.Impulse);
 
-        public static void PushAwayFrom(this Rigidbody2D rb, Vector2 target, float force) {
-            rb.AddForce((rb.position - target).normalized * force, ForceMode2D.Impulse);
-        }
+        public static void PushAwayFrom(this Rigidbody2D rb, Vector2 target, float force) =>
+            rb.AddForce(rb.position.AwayFrom(target) * force, ForceMode2D.Impulse);
 
         public static void MoveTo(this Rigidbody2D rb, Vector2 target, float speed, float tolerance = Consts.TOLERANCE) {
             if (rb.position.Reached(target, tolerance)) {
@@ -31,5 +30,8 @@ namespace DevelopmentEssentials.Extensions.Unity.Physics2D {
         public static void MoveAwayFrom(this Rigidbody2D rb, Vector2 target, float speed) {
             rb.linearVelocity = (rb.position - target).normalized * speed;
         }
+
+        public static float Distance(this Rigidbody2D rb, Rigidbody2D other) => rb.position.Distance(other.position);
+
     }
 }
