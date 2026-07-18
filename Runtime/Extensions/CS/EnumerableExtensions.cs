@@ -231,13 +231,25 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static T2 ElementAtOrDefaultValue<T1, T2>(this IEnumerable<T1> collection, Index index, Func<T1, T2> getter, T2 @default = default) =>
             getter(collection.ElementAtOrDefault(index)) ?? @default;
 
+        public static void ForEach<T>(this object obj, Action<T> action) {
+            if (obj is IEnumerable enumerable and not string) {
+                foreach (T k in enumerable)
+                    action.InvokeSafe(k);
+            }
+            else if (obj is ITuple tuple) {
+                tuple.ForEach(x => action.InvokeSafe((T)x));
+            }
+            else
+                action.InvokeSafe((T)obj);
+        }
+
         public static void ForEach(this object obj, Action<object> action) {
             if (obj is IEnumerable enumerable and not string) {
                 foreach (object k in enumerable)
                     action.InvokeSafe(k);
             }
             else if (obj is ITuple tuple) {
-                tuple.ForEach(action.InvokeSafe);
+                ForEach((object) tuple, action.InvokeSafe);
             }
             else
                 action.InvokeSafe(obj);

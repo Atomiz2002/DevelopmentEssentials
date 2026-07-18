@@ -168,6 +168,12 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static string RelativePath(this string fullPath) => fullPath.ReplaceSlashes().Replace(Application.dataPath, "Assets");
 
+        [Pure]
+        public static string[] Array(this string str) => new[] { str };
+
+        [Pure]
+        public static List<string> List(this string str) => new() { str };
+
         #region Starts/Ends|With
 
         /// <example>

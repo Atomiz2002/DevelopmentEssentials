@@ -120,6 +120,10 @@ namespace DevelopmentEssentials.Editor.Extensions.Unity {
 
         [Pure]
         [CanBeNull]
+        public static T LoadAssetImporter<T>(this Object asset) where T : AssetImporter => (T)AssetImporter.GetAtPath(asset.GetAssetPath());
+
+        [Pure]
+        [CanBeNull]
         public static T LoadAssetImporter<T>(this string path) where T : AssetImporter => (T)AssetImporter.GetAtPath(path.UnitifyPath());
 
         [Pure]

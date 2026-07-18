@@ -11,63 +11,57 @@ namespace DevelopmentEssentials.Editor.Helpers.Unity {
 
     public static class AssetDatabaseHelper {
 
-        [Pure]
-        public static List<string> GetSelectedGUIDsRecursively<T>() => GetSelectedGUIDsRecursively("t:" + typeof(T).Name);
+        // [Pure]
+        // public static List<string> GetSelectedGUIDsRecursively<T>() => GetSelectedGUIDsRecursively("t:" + typeof(T).Name);
+        //
+        // [Pure]
+        // public static List<string> GetSelectedGUIDsRecursively(string filter = "") {
+        //     List<string> selectedGUIDs = new(Selection.assetGUIDs);
+        //
+        //     if (selectedGUIDs.Count == 0)
+        //         return new();
+        //
+        //     foreach (string guid in selectedGUIDs.ToArray()) {
+        //         string path = AssetDatabase.GUIDToAssetPath(guid);
+        //
+        //         if (AssetDatabase.IsValidFolder(path)) // If it's a folder, get all texture GUIDs inside it
+        //             selectedGUIDs.AddRange(AssetDatabase.FindAssets(filter, new[] { path }));
+        //     }
+        //
+        //     return selectedGUIDs;
+        // }
 
-        [Pure]
-        public static List<string> GetSelectedGUIDsRecursively(string filter = "") {
-            List<string> selectedGUIDs = new(Selection.assetGUIDs);
+        public static void BulkEditFilteredSelectionIndividually<T>(Action<T> action, SelectionMode selectionMode = SelectionMode.Unfiltered, string undoName = null) where T : Object =>
+            StartStopAssetEditing(undoName, () => Selection.GetFiltered<T>(selectionMode).ForEach<T>(action.InvokeSafe));
 
-            if (selectedGUIDs.Count == 0)
-                return new();
+        public static void BulkEditFilteredSelection<T>(Action<T[]> action, SelectionMode selectionMode = SelectionMode.Unfiltered, string undoName = null) where T : Object =>
+            StartStopAssetEditing(undoName, () => action.InvokeSafe(Selection.GetFiltered<T>(selectionMode)));
 
-            foreach (string guid in selectedGUIDs.ToArray()) {
-                string path = AssetDatabase.GUIDToAssetPath(guid);
-
-                if (AssetDatabase.IsValidFolder(path)) // If it's a folder, get all texture GUIDs inside it
-                    selectedGUIDs.AddRange(AssetDatabase.FindAssets(filter, new[] { path }));
-            }
-
-            return selectedGUIDs;
-        }
-
-        public static void BulkEditSelection<T>(Action<T[]> action, SelectionMode selectionMode = SelectionMode.Unfiltered) where T : Object {
-            AssetDatabase.StartAssetEditing();
-
-            action.InvokeSafe(Selection.GetFiltered<T>(selectionMode));
-
-            AssetDatabase.StopAssetEditing();
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
-        }
-
-        public static void BulkEdit(List<string> guids, Action guidsAction) {
-            AssetDatabase.StartAssetEditing();
-
-            guidsAction.InvokeSafe();
-
-            AssetDatabase.StopAssetEditing();
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        public static void BulkEditGUIDs(List<string> guids, Action guidsAction, string undoName = null) {
+            StartStopAssetEditing(undoName, guidsAction);
 
             if (guids[0].LoadAssetByGUID().IsNot<DefaultAsset>())
                 AssetDatabase.ImportAsset(guids[0].GUIDToPath(), ImportAssetOptions.ForceUpdate);
         }
 
-        public static void BulkEdit(List<string> guids, Action<string> guidsAction) {
-            Undo.IncrementCurrentGroup();
-            int group = Undo.GetCurrentGroup();
-
-            AssetDatabase.StartAssetEditing();
-
-            foreach (string guid in guids)
-                guidsAction.InvokeSafe(guid);
-
-            AssetDatabase.StopAssetEditing();
-            Undo.CollapseUndoOperations(group);
-
-            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
+        public static void BulkEditGUIDs(List<string> guids, Action<string> guidsAction, string undoName = null) {
+            StartStopAssetEditing(undoName, () => {
+                foreach (string guid in guids)
+                    guidsAction.InvokeSafe(guid);
+            });
 
             if (guids[0].LoadAssetByGUID().IsNot<DefaultAsset>())
                 AssetDatabase.ImportAsset(guids[0].GUIDToPath(), ImportAssetOptions.ForceUpdate);
+        }
+
+        private static void StartStopAssetEditing(string undoName, Action action) {
+            UndoHelper.Record(undoName, () => {
+                AssetDatabase.StartAssetEditing();
+                action.InvokeSafe();
+                AssetDatabase.StopAssetEditing();
+            });
+
+            AssetDatabase.Refresh(ImportAssetOptions.ForceUpdate);
         }
 
     }
