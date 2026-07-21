@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 
 namespace DevelopmentEssentials.Extensions.CS {
@@ -37,6 +38,21 @@ namespace DevelopmentEssentials.Extensions.CS {
         public static T Var<T, V>(this T t, Func<T, V> getter, out V var) {
             var = getter(t);
             return t;
+        }
+
+        [Pure]
+        public static T[] Array<T>(this T t, params T[] ts) {
+            T[] result = new T[ts.Length + 1];
+            result[0] = t;
+            System.Array.Copy(ts, 0, result, 1, ts.Length);
+            return result;
+        }
+
+        [Pure]
+        public static List<T> List<T>(this T t, params T[] ts) {
+            List<T> list = new(ts.Length + 1) { t };
+            list.AddRange(ts);
+            return list;
         }
 
     }

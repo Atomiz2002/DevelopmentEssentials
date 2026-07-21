@@ -41,8 +41,8 @@ namespace DevelopmentEssentials {
         }
 
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
-        protected bool TryGetComponentAbove<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.TryGetComponentAbove(ref component, name, @override);
-        protected bool TryGetComponentBelow<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.TryGetComponentBelow(ref component, name, @override);
+        protected bool TryGetComponentAbove<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.GetComponentInParent(ref component, name, @override);
+        protected bool TryGetComponentBelow<T>(ref T component, string name = null, bool @override = false) where T : Component => gameObject.TryGetComponentInChildren(ref component, name, @override);
         protected bool TryGetComponent<T>(ref T component, string name = null, bool @override = false) where T : Component      => gameObject.TryGetComponent(ref component, name, @override);
         protected bool TryAddComponent<T>(out T component, string name = null) where T : Component                              => gameObject.TryAddComponent(out component, name);
 #else

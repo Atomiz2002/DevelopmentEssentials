@@ -9,7 +9,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
 
     public static class UnityEventExtensions {
 
-        public static void SafeInvoke(this UnityEvent action) {
+        public static void InvokeSafe(this UnityEvent action) {
             try {
                 action?.Invoke();
             }
@@ -20,7 +20,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             }
         }
 
-        public static void SafeInvoke<T>(this UnityEvent<T> action, T arg) {
+        public static void InvokeSafe<T>(this UnityEvent<T> action, T arg) {
             try {
                 action?.Invoke(arg);
             }
@@ -31,7 +31,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             }
         }
 
-        public static void SafeInvoke<T1, T2>(this UnityEvent<T1, T2> action, T1 arg1, T2 arg2) {
+        public static void InvokeSafe<T1, T2>(this UnityEvent<T1, T2> action, T1 arg1, T2 arg2) {
             try {
                 action?.Invoke(arg1, arg2);
             }
@@ -42,7 +42,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             }
         }
 
-        public static void SafeInvoke<T1, T2, T3>(this UnityEvent<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) {
+        public static void InvokeSafe<T1, T2, T3>(this UnityEvent<T1, T2, T3> action, T1 arg1, T2 arg2, T3 arg3) {
             try {
                 action?.Invoke(arg1, arg2, arg3);
             }
@@ -53,7 +53,7 @@ namespace DevelopmentEssentials.Extensions.Unity {
             }
         }
 
-        public static void SafeInvoke<T1, T2, T3, T4>(this UnityEvent<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) {
+        public static void InvokeSafe<T1, T2, T3, T4>(this UnityEvent<T1, T2, T3, T4> action, T1 arg1, T2 arg2, T3 arg3, T4 arg4) {
             try {
                 action?.Invoke(arg1, arg2, arg3, arg4);
             }

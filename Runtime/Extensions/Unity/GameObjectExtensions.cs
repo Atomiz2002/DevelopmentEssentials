@@ -31,9 +31,9 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
-        public static bool TryGetComponentAbove<T>(this GameObject go, ref T component, string name = null, bool @override = false) where T : Component {
+        public static bool GetComponentInParent<T>(this GameObject go, ref T component, string name = null, bool @override = false) where T : Component {
 #else
-        public static bool TryGetComponentAbove<T>(this GameObject go, ref T component, bool @override = false) where T : Component {
+        public static bool GetComponentInParent<T>(this GameObject go, ref T component, bool @override = false) where T : Component {
 #endif
             if (component && !@override) return true;
 
@@ -53,9 +53,30 @@ namespace DevelopmentEssentials.Extensions.Unity {
         }
 
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
-        public static bool TryGetComponentBelow<T>(this GameObject go, ref T component, string name = null, bool @override = false) where T : Component {
+        public static T GetComponentInParent<T>(this GameObject go, string name = null) where T : Component {
 #else
-        public static bool TryGetComponentBelow<T>(this GameObject go, ref T component, bool @override = false) where T : Component {
+        public static T GetComponentInParent<T>(this GameObject go) where T : Component {
+#endif
+            Transform parent    = go.transform;
+            T         component = null;
+
+            while (!component && parent) {
+                parent = parent.parent;
+
+                if (parent.gameObject.TryGetComponent(ref component))
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+                    if (name == null || component.GetName() == name)
+#endif
+                        return component;
+            }
+
+            return null;
+        }
+
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+        public static bool TryGetComponentInChildren<T>(this GameObject go, ref T component, string name = null, bool @override = false) where T : Component {
+#else
+        public static bool TryGetComponentInChildren<T>(this GameObject go, ref T component, bool @override = false) where T : Component {
 #endif
             if (component && !@override) return true;
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
@@ -78,7 +99,29 @@ namespace DevelopmentEssentials.Extensions.Unity {
 #endif
         }
 
-        public static T TryAddComponent<T>(this GameObject go) where T : Component => go.TryGetComponent(out T component) ? component : go.AddComponent<T>();
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+        public static T GetComponent<T>(this GameObject go, string name = null) where T : Component {
+            return go.GetComponents<T>().FirstOrDefault(c => name == null || c.GetName() == name);
+        }
+#else
+        public static T TryGetComponent<T>(this GameObject go) where T : Component {
+            return go.GetComponent<T>();
+        }
+#endif
+
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+        public static T AddComponent<T>(this GameObject go, string name = null) where T : Component {
+            T t = go.AddComponent<T>();
+            t.SetName(name);
+            return t;
+        }
+#endif
+
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+        public static T TryAddComponent<T>(this GameObject go, string name = null) where T : Component => go.GetComponent<T>(name).n() ?? go.AddComponent<T>(name);
+#else
+        public static T TryAddComponent<T>(this GameObject go) where T : Component => go.GetComponent<T>().n() ?? go.AddComponent<T>();
+#endif
 
         /// <returns>true if added new component</returns>
 #if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES

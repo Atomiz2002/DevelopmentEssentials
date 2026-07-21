@@ -12,6 +12,10 @@ namespace DevelopmentEssentials.Extensions.CS {
 
     public static class EnumerableExtensions {
 
+        public static void Add<T>(this T[] array, T element) {
+            ArrayUtility.Add(ref array, element);
+        }
+
         [Pure]
         public static IEnumerable<T> Distinct<T, T2>(this IEnumerable<T> source, Func<T, T2> keySelector) {
             if (source == null) return Enumerable.Empty<T>();
@@ -35,6 +39,19 @@ namespace DevelopmentEssentials.Extensions.CS {
         [Pure]
         public static bool HasEmpty<T>(this IEnumerable<T> collection) =>
             collection == null || collection.Any(e => e == null);
+
+        [Pure]
+        public static IEnumerable<T> RemoveAll<T>(this IEnumerable<T> collection, IEnumerable<T> elements) {
+            HashSet<T> set = new(elements);
+            foreach (T item in collection)
+                if (!set.Contains(item))
+                    yield return item;
+        }
+
+        public static int RemoveAll<T>(this List<T> list, IEnumerable<T> elements) {
+            HashSet<T> set = new(elements);
+            return list.RemoveAll(set.Contains);
+        }
 
         [Pure]
         public static IEnumerable<T> Except<T>(this IEnumerable<T> collection, T element) =>

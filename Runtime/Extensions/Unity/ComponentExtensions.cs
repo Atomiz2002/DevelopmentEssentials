@@ -15,6 +15,12 @@ namespace DevelopmentEssentials.Extensions.Unity {
         public static bool TryAddComponent<T>(this Component c, out T component) where T : Component => c.gameObject.TryAddComponent(out component);
 #endif
 
+#if DEVELOPMENT_ESSENTIALS_RUNTIME_COMPONENT_NAMES
+        public static T TryAddComponent<T>(this Component c, string name = null) where T : Component => c.gameObject.TryAddComponent<T>(name);
+#else
+        public static T TryAddComponent<T>(this Component c) where T : Component => c.gameObject.TryAddComponent<T>();
+#endif
+
         public static T FindSprite<T>(this Component c) where T : Object =>
             c.gameObject.LinkSprite<T>();
 
